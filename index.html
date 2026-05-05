@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>Kitab Kuning & Perangkat Ajar Guru - Tinta Guru Muda (TiGuDa)</title>
+    <meta
+      name="description"
+      content="Tinta Guru Muda menyediakan kajian Kitab Kuning lengkap dengan terjemahan serta perangkat ajar guru seperti modul ajar, CP, dan ATP."
+    />
+    <meta
+      name="keywords"
+      content="kitab kuning, perangkat ajar, modul ajar, guru, pendidikan islam"
+    />
+    <meta name="author" content="Tinta Guru Muda" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      .hero-gradient {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      }
+
+      /* Animasi */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in-up {
+        animation: fadeInUp 1s ease forwards;
+      }
+
+      /* Card */
+      .card-content {
+        transition: all 0.4s ease;
+      }
+
+      .card-content:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Mobile Menu */
+      #mobile-menu {
+        transition: all 0.3s ease;
+      }
+
+      #mobile-menu.active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      #mobile-menu:not(.active) {
+        opacity: 0;
+        transform: translateY(-1rem);
+        pointer-events: none;
+      }
+    </style>
+  </head>
+
+  <body class="text-slate-800 bg-white">
+    <!-- NAVBAR -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur border-b z-50">
+      <div
+        class="max-w-7xl mx-auto px-4 flex justify-between h-20 items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-10 h-10 bg-emerald-700 text-white flex items-center justify-center rounded-lg font-bold"
+          >
+            T
+          </div>
+          <span class="font-bold text-xl text-emerald-900">TiGuDa</span>
+        </div>
+
+        <div class="hidden md:flex space-x-8">
+          <a href="#beranda" class="font-semibold">Beranda</a>
+          <a href="kitab-kuning.html">Kitab Kuning</a>
+          <a href="perangkat-ajar.html">Perangkat Ajar</a>
+        </div>
+
+        <button
+          id="menu-btn"
+          class="md:hidden p-2 text-slate-600 hover:text-emerald-700 transition"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden absolute top-20 left-0 w-full bg-white/95 backdrop-blur-lg border-b shadow-lg py-4 opacity-0 -translate-y-4 pointer-events-none transition-all duration-300"
+      >
+        <div class="flex flex-col px-4 space-y-2">
+          <a
+            href="#beranda"
+            class="block py-3 px-4 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg font-medium transition"
+            >Beranda</a
+          >
+          <a
+            href="kitab-kuning.html"
+            class="block py-3 px-4 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg font-medium transition"
+            >Kitab Kuning</a
+          >
+          <a
+            href="perangkat-ajar.html"
+            class="block py-3 px-4 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg font-medium transition"
+            >Perangkat Ajar</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="beranda" class="pt-40 pb-24 hero-gradient text-center">
+      <div class="max-w-3xl mx-auto px-4">
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in-up">
+          Tinta Guru Muda
+        </h1>
+
+        <p class="text-lg text-slate-600 mb-8">
+          Platform Perpustakaan Digital Kitab Kuning dan Perangkat Ajar.
+        </p>
+
+        <a
+          href="#daftar-isi"
+          class="bg-emerald-700 text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition"
+        >
+          Mulai
+        </a>
+      </div>
+    </section>
+
+    <!-- TENTANG -->
+    <section
+      class="py-24 bg-gradient-to-b from-white to-emerald-50 text-center"
+    >
+      <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-4">Tentang Kami</h2>
+        <p class="text-slate-600 text-lg">
+          Tinta Guru Muda adalah platform perpustakaan digital untuk membantu
+          memahami Kitab Kuning serta menyediakan perangkat ajar siap pakai.
+        </p>
+      </div>
+    </section>
+
+    <!-- MENU -->
+    <section id="daftar-isi" class="py-24">
+      <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+        <!-- Kitab -->
+        <div class="card-content p-8 bg-emerald-50 rounded-3xl">
+          <h3 class="text-2xl font-bold mb-3">Kitab Kuning</h3>
+          <p class="text-slate-600 mb-4">
+            Pelajari kitab klasik dengan terjemahan, mufrodat dan pembahasan.
+          </p>
+          <a href="kitab-kuning.html" class="text-emerald-700 font-bold"
+            >Buka →</a
+          >
+        </div>
+
+        <!-- Perangkat -->
+        <div class="card-content p-8 bg-slate-50 rounded-3xl">
+          <h3 class="text-2xl font-bold mb-3">Perangkat Ajar</h3>
+          <p class="text-slate-600 mb-4">
+            Download modul ajar, ATP, dan administrasi guru.
+          </p>
+          <a href="perangkat-ajar.html" class="text-slate-800 font-bold"
+            >Buka →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white py-12">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <!-- Brand -->
+        <h3 class="text-2xl font-bold mb-4">Tinta Guru Muda</h3>
+        <p class="text-slate-400 mb-6">
+          Platform perpustakaan Kitab Kuning dan perangkat ajar.
+        </p>
+
+        <!-- Social Media -->
+        <div class="flex justify-center space-x-6 mb-6">
+          <!-- Instagram -->
+          <a
+            href="https://www.instagram.com/tiguda.id/"
+            target="_blank"
+            class="bg-slate-800 p-3 rounded-full hover:bg-emerald-600 transition hover:scale-110"
+          >
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path
+                d="M7.75 2C4.574 2 2 4.574 2 7.75v8.5C2 19.426 4.574 22 7.75 22h8.5C19.426 22 22 19.426 22 16.25v-8.5C22 4.574 19.426 2 16.25 2h-8.5zm0 2h8.5C18.216 4 20 5.784 20 7.75v8.5c0 1.966-1.784 3.75-3.75 3.75h-8.5C5.784 20 4 18.216 4 16.25v-8.5C4 5.784 5.784 4 7.75 4zm8.25 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"
+              />
+            </svg>
+          </a>
+
+          <!-- YouTube -->
+          <a
+            href="https://www.youtube.com/@TintaGuruMuda"
+            target="_blank"
+            class="bg-slate-800 p-3 rounded-full hover:bg-emerald-600 transition hover:scale-110"
+          >
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path
+                d="M21.582 6.186a2.974 2.974 0 00-2.093-2.104C17.59 3.5 12 3.5 12 3.5s-5.59 0-7.489.582A2.974 2.974 0 002.418 6.186 31.72 31.72 0 002 12a31.72 31.72 0 00.418 5.814 2.974 2.974 0 002.093 2.104C6.41 20.5 12 20.5 12 20.5s5.59 0 7.489-.582a2.974 2.974 0 002.093-2.104A31.72 31.72 0 0022 12a31.72 31.72 0 00-.418-5.814zM10 15.5v-7l6 3.5-6 3.5z"
+              />
+            </svg>
+          </a>
+
+          <!-- Email -->
+          <a
+            href="mailto:tintagurumuda@gmail.com"
+            class="bg-slate-800 p-3 rounded-full hover:bg-emerald-600 transition hover:scale-110"
+          >
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path
+                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Copyright -->
+        <p class="text-slate-500 text-sm">
+          &copy; 2026 Tinta Guru Muda. All rights reserved.
+        </p>
+      </div>
+    </footer>
+    <script>
+      const btn = document.getElementById("menu-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("active");
+      });
+
+      // Tutup menu saat klik di luar
+      document.addEventListener("click", (e) => {
+        if (!menu.contains(e.target) && e.target !== btn) {
+          menu.classList.remove("active");
+        }
+      });
+    </script>
+  </body>
+</html>

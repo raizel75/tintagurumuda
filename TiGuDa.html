@@ -1,0 +1,2090 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin - Tinta Guru Muda</title>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: #f1f5f9;
+      }
+      .font-arabic {
+        font-family: "Amiri Quran", serif;
+        line-height: 2.2;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .view-section {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      .view-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Loading overlay */
+      #global-loader {
+        display: none;
+      }
+      #global-loader.active {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body
+    class="text-slate-800 antialiased h-screen overflow-hidden bg-slate-50 relative text-xs"
+  >
+    <!-- GLOBAL LOADER -->
+    <div
+      id="global-loader"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[200] items-center justify-center flex-col gap-3 text-white"
+    >
+      <svg
+        class="animate-spin h-8 w-8 text-emerald-400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span
+        class="font-bold tracking-widest animate-pulse text-xs"
+        id="loader-text"
+        >Memuat Data...</span
+      >
+    </div>
+
+    <!-- ============================================== -->
+    <!-- LAYAR LOGIN ADMIN (SUPABASE AUTH) -->
+    <!-- ============================================== -->
+    <div
+      id="login-screen"
+      class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center transition-opacity duration-500 p-4"
+    >
+      <div
+        class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-sm transform transition-transform duration-500 scale-100"
+        id="login-card"
+      >
+        <div class="text-center mb-6">
+          <div
+            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-3"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+          <h1 class="text-lg font-bold text-slate-800 tracking-tight">
+            Login Admin
+          </h1>
+          <p class="text-slate-500 text-[11px] mt-1">
+            Tinta Guru Muda (TiGuDa)
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label
+              class="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider"
+              >Email Admin</label
+            >
+            <input
+              type="email"
+              id="login-email"
+              class="w-full border border-slate-200 rounded-lg p-3 text-xs outline-none focus:border-emerald-500 transition-colors"
+              placeholder="admin@tiguda.com"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-[11px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider"
+              >Password</label
+            >
+            <div class="relative">
+              <input
+                type="password"
+                id="login-password"
+                class="w-full border border-slate-200 rounded-lg p-3 pr-12 text-xs outline-none focus:border-emerald-500 transition-colors"
+                placeholder="Masukkan password..."
+              />
+              <button
+                type="button"
+                onclick="togglePassword()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-emerald-600 transition-colors focus:outline-none"
+              >
+                <svg
+                  id="eye-icon-closed"
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                  />
+                </svg>
+                <svg
+                  id="eye-icon-open"
+                  class="w-5 h-5 hidden"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p
+              id="login-error"
+              class="text-red-500 text-[10px] font-semibold mt-1.5 hidden"
+            ></p>
+          </div>
+          <button
+            onclick="prosesLogin()"
+            id="btn-login"
+            class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 shadow-sm hover:shadow transition-all flex justify-center items-center gap-2 group text-xs mt-2"
+          >
+            <span>Masuk Dashboard</span>
+            <svg
+              class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- DASHBOARD LAYOUT -->
+    <!-- ============================================== -->
+    <div id="dashboard-layout" class="hidden h-screen flex w-full">
+      <!-- Sidebar Overlay (Untuk Mobile) -->
+      <div
+        id="sidebar-overlay"
+        onclick="toggleSidebar()"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden transition-opacity opacity-0 duration-300 md:hidden"
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="w-64 bg-slate-900 text-white flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 shrink-0 shadow-xl"
+      >
+        <div
+          class="p-4 border-b border-slate-800 flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2">
+            <div class="bg-emerald-500 text-white p-1.5 rounded-lg">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+            </div>
+            <div>
+              <span class="text-sm font-bold tracking-wide block">TiGuDa</span>
+              <span
+                class="text-[10px] text-emerald-400 font-medium tracking-wider uppercase"
+                >Admin Panel</span
+              >
+            </div>
+          </div>
+          <!-- Tombol Tutup Sidebar di HP -->
+          <button
+            onclick="toggleSidebar()"
+            class="md:hidden p-1.5 bg-slate-800 text-slate-400 rounded-md hover:text-white hover:bg-red-500/20 transition-colors"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto custom-scrollbar">
+          <p
+            class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 mt-3 px-3"
+          >
+            Data Master
+          </p>
+          <button
+            onclick="switchView('view-kitab', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-colors bg-slate-800 text-emerald-400"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+            Kelola Kitab
+          </button>
+          <button
+            onclick="switchView('view-bagian', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+            Kelola Bagian
+          </button>
+          <button
+            onclick="switchView('view-fasal', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            Kelola Fasal/Bab
+          </button>
+          <button
+            onclick="switchView('view-kelola-isi', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+            Kelola Isi Kitab
+          </button>
+
+          <p
+            class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 mt-5 px-3"
+          >
+            Konten Teks
+          </p>
+          <button
+            onclick="switchView('view-isi-kitab', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors border border-slate-700"
+          >
+            <svg
+              class="w-4 h-4 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Input Isi & Mufrodat
+          </button>
+        </nav>
+
+        <div class="p-3 border-t border-slate-800">
+          <button
+            onclick="prosesLogout()"
+            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            Keluar
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content Wrapper -->
+      <main
+        class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative"
+      >
+        <!-- Mobile Navbar -->
+        <div
+          class="md:hidden bg-slate-900 text-white p-3 flex justify-between items-center shrink-0 shadow-md"
+        >
+          <div class="flex items-center gap-3">
+            <button
+              onclick="toggleSidebar()"
+              class="p-1.5 bg-slate-800 rounded hover:bg-emerald-600 transition-colors text-slate-300 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+            <span class="font-bold text-sm">TiGuDa Admin</span>
+          </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div
+          class="flex-1 overflow-y-auto custom-scrollbar p-3 md:p-6"
+          id="main-scroll-area"
+        >
+          <!-- VIEW: KELOLA KITAB -->
+          <section
+            id="view-kitab"
+            class="view-section active max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Data Master: Kitab
+              </h1>
+              <p class="text-slate-500 mt-1 text-[11px] md:text-xs">
+                Tambahkan dan kelola daftar kitab utama.
+              </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div
+                class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit"
+              >
+                <h2 class="font-bold text-sm mb-3">Tambah Kitab</h2>
+                <div class="space-y-3">
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Nama Kitab</label
+                    ><input
+                      type="text"
+                      id="k-nama"
+                      class="w-full border rounded-lg p-2 text-xs outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Nama Arab (Opsional)</label
+                    ><input
+                      type="text"
+                      id="k-arab"
+                      class="w-full border rounded-lg p-2 text-sm font-arabic text-right"
+                      dir="rtl"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Pengarang</label
+                    ><input
+                      type="text"
+                      id="k-pengarang"
+                      class="w-full border rounded-lg p-2 text-xs outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Kategori</label
+                    ><input
+                      type="text"
+                      id="k-kategori"
+                      class="w-full border rounded-lg p-2 text-xs outline-none focus:border-emerald-500"
+                      placeholder="fiqih / aqidah"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Slug URL</label
+                    ><input
+                      type="text"
+                      id="k-slug"
+                      class="w-full border rounded-lg p-2 text-xs outline-none focus:border-emerald-500"
+                      placeholder="safinatun-najah"
+                    />
+                  </div>
+                  <button
+                    onclick="insertKitab()"
+                    class="w-full bg-slate-800 text-white font-bold py-2 rounded-lg hover:bg-slate-900 transition-colors text-xs mt-1"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </div>
+              <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 lg:col-span-2 overflow-hidden flex flex-col"
+              >
+                <div
+                  class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center"
+                >
+                  <h2 class="font-bold text-sm">Daftar Kitab</h2>
+                  <span
+                    class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold"
+                    id="k-count"
+                    >0 Data</span
+                  >
+                </div>
+                <div
+                  class="p-2.5 border-b border-slate-100 bg-white flex gap-2"
+                >
+                  <select
+                    id="filter-k-kategori"
+                    onchange="renderTableKitab()"
+                    class="text-xs border rounded-md p-1.5 outline-none w-1/2 md:w-1/3 bg-slate-50"
+                  >
+                    <option value="">Semua Kategori</option>
+                  </select>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead
+                      class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]"
+                    >
+                      <tr>
+                        <th class="px-3 py-2 w-10">ID</th>
+                        <th class="px-3 py-2">Nama</th>
+                        <th class="px-3 py-2">Kategori</th>
+                        <th class="px-3 py-2">Pengarang</th>
+                        <th class="px-3 py-2 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="table-kitab"
+                      class="divide-y divide-slate-100"
+                    ></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- VIEW: KELOLA BAGIAN -->
+          <section
+            id="view-bagian"
+            class="view-section max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Data Master: Bagian
+              </h1>
+              <p class="text-slate-500 mt-1 text-[11px] md:text-xs">
+                Kelola pembagian kitab (Jilid, Matan, Syarah).
+              </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div
+                class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit"
+              >
+                <h2 class="font-bold text-sm mb-3">Tambah Bagian</h2>
+                <div class="space-y-3">
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Kitab Induk</label
+                    ><select
+                      id="b-kitab"
+                      class="w-full border rounded-lg p-2 text-xs outline-none bg-slate-50"
+                    ></select>
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Nama Bagian</label
+                    ><input
+                      type="text"
+                      id="b-nama"
+                      class="w-full border rounded-lg p-2 text-xs outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Tipe</label
+                    ><select
+                      id="b-tipe"
+                      class="w-full border rounded-lg p-2 text-xs outline-none bg-slate-50"
+                    >
+                      <option value="Jilid">Jilid</option>
+                      <option value="Matan">Matan</option>
+                      <option value="Syarah">Syarah</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Urutan</label
+                    ><input
+                      type="number"
+                      id="b-urutan"
+                      class="w-full border rounded-lg p-2 text-xs outline-none"
+                      value="1"
+                    />
+                  </div>
+                  <button
+                    onclick="insertBagian()"
+                    class="w-full bg-slate-800 text-white font-bold py-2 rounded-lg hover:bg-slate-900 transition-colors text-xs mt-1"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </div>
+              <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 lg:col-span-2 overflow-hidden flex flex-col"
+              >
+                <div
+                  class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center"
+                >
+                  <h2 class="font-bold text-sm">Daftar Bagian</h2>
+                  <span
+                    class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold"
+                    id="b-count"
+                    >0 Data</span
+                  >
+                </div>
+                <div
+                  class="p-2.5 border-b border-slate-100 bg-white flex gap-2"
+                >
+                  <select
+                    id="filter-b-kategori"
+                    onchange="
+                      updateFilterKitabForBagian();
+                      renderTableBagian();
+                    "
+                    class="text-xs border rounded-md p-1.5 outline-none w-1/2 bg-slate-50"
+                  >
+                    <option value="">Kategori</option>
+                  </select>
+                  <select
+                    id="filter-b-kitab"
+                    onchange="renderTableBagian()"
+                    class="text-xs border rounded-md p-1.5 outline-none w-1/2 bg-slate-50"
+                  >
+                    <option value="">Semua Kitab</option>
+                  </select>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead
+                      class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]"
+                    >
+                      <tr>
+                        <th class="px-3 py-2 w-16">Urutan</th>
+                        <th class="px-3 py-2">Kitab Induk</th>
+                        <th class="px-3 py-2">Nama Bagian</th>
+                        <th class="px-3 py-2 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="table-bagian"
+                      class="divide-y divide-slate-100"
+                    ></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- VIEW: KELOLA FASAL -->
+          <section
+            id="view-fasal"
+            class="view-section max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Data Master: Fasal/Bab
+              </h1>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div
+                class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit"
+              >
+                <h2 class="font-bold text-sm mb-3">Tambah Fasal</h2>
+                <div class="space-y-3">
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Kitab</label
+                    ><select
+                      id="f-kitab"
+                      onchange="updateDropdownBagianForFasal()"
+                      class="w-full border rounded-lg p-2 text-xs bg-slate-50"
+                    ></select>
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Bagian</label
+                    ><select
+                      id="f-bagian"
+                      class="w-full border rounded-lg p-2 text-xs bg-slate-50 disabled:opacity-50"
+                      disabled
+                    ></select>
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Nama Fasal</label
+                    ><input
+                      type="text"
+                      id="f-nama"
+                      class="w-full border rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Nama Arab</label
+                    ><input
+                      type="text"
+                      id="f-arab"
+                      class="w-full border rounded-lg p-2 text-sm font-arabic text-right"
+                      dir="rtl"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[11px] font-bold text-slate-700 mb-1"
+                      >Urutan</label
+                    ><input
+                      type="number"
+                      id="f-urutan"
+                      class="w-full border rounded-lg p-2 text-xs"
+                      value="1"
+                    />
+                  </div>
+                  <button
+                    onclick="insertFasal()"
+                    class="w-full bg-slate-800 text-white font-bold py-2 rounded-lg hover:bg-slate-900 transition-colors text-xs mt-1"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </div>
+              <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 lg:col-span-2 overflow-hidden flex flex-col"
+              >
+                <div
+                  class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center"
+                >
+                  <h2 class="font-bold text-sm">Daftar Fasal</h2>
+                  <span
+                    class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold"
+                    id="f-count"
+                    >0 Data</span
+                  >
+                </div>
+                <div
+                  class="p-2.5 border-b border-slate-100 bg-white flex gap-2"
+                >
+                  <select
+                    id="filter-f-kitab"
+                    onchange="
+                      updateFilterBagianForFasal();
+                      renderTableFasal();
+                    "
+                    class="text-xs border rounded-md p-1.5 outline-none w-1/2 bg-slate-50"
+                  ></select>
+                  <select
+                    id="filter-f-bagian"
+                    onchange="renderTableFasal()"
+                    class="text-xs border rounded-md p-1.5 outline-none w-1/2 bg-slate-50"
+                    disabled
+                  >
+                    <option value="">Pilih Bagian</option>
+                  </select>
+                </div>
+                <div class="overflow-x-auto flex-1">
+                  <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead
+                      class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] sticky top-0 shadow-sm"
+                    >
+                      <tr>
+                        <th class="px-3 py-2 w-16">Urutan</th>
+                        <th class="px-3 py-2">Nama Fasal</th>
+                        <th class="px-3 py-2">Lokasi (Bagian)</th>
+                        <th class="px-3 py-2 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="table-fasal"
+                      class="divide-y divide-slate-100"
+                    ></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- VIEW: KELOLA ISI KITAB -->
+          <section
+            id="view-kelola-isi"
+            class="view-section max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Kelola Isi Kitab
+              </h1>
+              <p class="text-slate-500 mt-1 text-[11px] md:text-xs">
+                Saring paragraf kitab untuk mengedit urutan atau hapus.
+              </p>
+            </div>
+
+            <div
+              class="bg-white p-4 rounded-xl shadow-sm border border-slate-200"
+            >
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="col-span-2 md:col-span-1">
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Kategori</label
+                  >
+                  <select
+                    id="filter-ki-kategori"
+                    onchange="updateKitabKelolaIsi()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  >
+                    <option value="">Semua Kategori</option>
+                  </select>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Kitab</label
+                  >
+                  <select
+                    id="filter-ki-kitab"
+                    onchange="updateBagianKelolaIsi()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  >
+                    <option value="">Semua Kitab</option>
+                  </select>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Bagian</label
+                  >
+                  <select
+                    id="filter-ki-bagian"
+                    onchange="updateFasalKelolaIsi()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none disabled:opacity-50"
+                    disabled
+                  >
+                    <option value="">Pilih Bagian</option>
+                  </select>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Fasal</label
+                  >
+                  <select
+                    id="filter-ki-fasal"
+                    onchange="renderTableKelolaIsi()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none disabled:opacity-50"
+                    disabled
+                  >
+                    <option value="">Pilih Fasal</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col"
+            >
+              <div
+                class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center"
+              >
+                <h2 class="font-bold text-sm">Daftar Paragraf</h2>
+                <span
+                  class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold"
+                  id="ki-count"
+                  >0 Data</span
+                >
+              </div>
+
+              <div
+                class="overflow-x-auto overflow-y-auto max-h-[400px] md:max-h-[500px] custom-scrollbar"
+              >
+                <table class="w-full text-left text-xs min-w-[500px]">
+                  <thead
+                    class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] sticky top-0 shadow-sm z-10"
+                  >
+                    <tr>
+                      <th class="px-3 py-2 w-16">No</th>
+                      <th class="px-3 py-2 w-1/2">Teks Arab</th>
+                      <th class="px-3 py-2">Terjemahan</th>
+                      <th class="px-3 py-2 text-center w-20">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="table-kelola-isi"
+                    class="divide-y divide-slate-100"
+                  >
+                    <tr>
+                      <td
+                        colspan="4"
+                        class="p-6 text-center text-slate-500 text-xs"
+                      >
+                        Pilih filter di atas untuk memunculkan data.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- VIEW: INPUT ISI KITAB -->
+          <section
+            id="view-isi-kitab"
+            class="view-section max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Input Teks & Mufrodat
+              </h1>
+            </div>
+
+            <div
+              class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200"
+            >
+              <h2
+                class="font-bold text-sm mb-3 flex items-center gap-2 border-b pb-2"
+              >
+                <span
+                  class="bg-emerald-100 text-emerald-700 w-5 h-5 rounded flex items-center justify-center text-[10px]"
+                  >1</span
+                >
+                Lokasi Simpan
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold mb-1">Kitab</label
+                  ><select
+                    id="select-kitab"
+                    onchange="loadBagianInput()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50"
+                  ></select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold mb-1">Bagian</label
+                  ><select
+                    id="select-bagian"
+                    onchange="loadFasalInput()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 disabled:opacity-50"
+                    disabled
+                  ></select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold mb-1">Fasal</label
+                  ><select
+                    id="select-fasal"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 disabled:opacity-50"
+                    disabled
+                  ></select>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200"
+            >
+              <h2
+                class="font-bold text-sm mb-3 flex items-center gap-2 border-b pb-2"
+              >
+                <span
+                  class="bg-emerald-100 text-emerald-700 w-5 h-5 rounded flex items-center justify-center text-[10px]"
+                  >2</span
+                >
+                Kalimat Utama (Paragraf)
+              </h2>
+              <div class="space-y-3">
+                <div>
+                  <label
+                    class="block font-bold text-[11px] text-slate-700 mb-1.5"
+                    >Teks Arab <span class="text-red-500">*</span></label
+                  >
+                  <textarea
+                    id="input-arab"
+                    class="w-full border rounded-lg p-3 font-arabic text-2xl md:text-3xl text-right focus:border-emerald-500 outline-none shadow-inner leading-relaxed"
+                    dir="rtl"
+                    rows="3"
+                    placeholder="بُنِيَ الإِسْلَامُ..."
+                  ></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block font-bold text-[11px] text-slate-700 mb-1"
+                      >Terjemahan</label
+                    ><textarea
+                      id="input-indo"
+                      class="w-full border rounded-lg p-2 text-xs focus:border-emerald-500 outline-none"
+                      rows="2"
+                    ></textarea>
+                  </div>
+                  <div>
+                    <label
+                      class="block font-bold text-[11px] text-slate-700 mb-1"
+                      >Penjelasan (Syarah)</label
+                    ><textarea
+                      id="input-penjelasan"
+                      class="w-full border rounded-lg p-2 text-xs focus:border-emerald-500 outline-none"
+                      rows="2"
+                    ></textarea>
+                  </div>
+                </div>
+                <button
+                  onclick="prosesPecahKata()"
+                  class="w-full md:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold hover:bg-emerald-700 flex items-center justify-center gap-2 mt-2"
+                >
+                  Pecah Kata (Auto-Split)
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="area-mufrodat"
+              class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 hidden"
+            >
+              <h2
+                class="font-bold text-sm mb-3 flex items-center gap-2 border-b pb-2"
+              >
+                <span
+                  class="bg-blue-100 text-blue-700 w-5 h-5 rounded flex items-center justify-center text-[10px]"
+                  >3</span
+                >
+                Arti Per Kata
+              </h2>
+              <div class="overflow-x-auto">
+                <table
+                  class="w-full text-left text-xs border-collapse min-w-[500px]"
+                >
+                  <thead>
+                    <tr
+                      class="bg-slate-50 text-[10px] uppercase text-slate-500"
+                    >
+                      <th class="px-2 py-2 border-b text-center w-10">No</th>
+                      <th class="px-2 py-2 border-b text-right w-1/3">
+                        Kata Arab
+                      </th>
+                      <th class="px-2 py-2 border-b">Arti</th>
+                      <th class="px-2 py-2 border-b">Tarkib</th>
+                      <th class="px-2 py-2 border-b">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="tabel-body-mufrodat"
+                    class="divide-y divide-slate-100"
+                  ></tbody>
+                </table>
+              </div>
+              <div class="mt-4 flex flex-col md:flex-row justify-end gap-2">
+                <button
+                  onclick="batalPecah()"
+                  class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-100 w-full md:w-auto"
+                >
+                  Batal
+                </button>
+                <button
+                  onclick="simpanIsiDanMufrodatKeDB()"
+                  class="bg-slate-800 text-white px-5 py-2 rounded-lg text-xs font-bold hover:bg-slate-900 flex items-center justify-center gap-2 w-full md:w-auto"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                    />
+                  </svg>
+                  Simpan Permanen
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal Edit Urutan Umum -->
+    <div
+      id="modal-edit"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4"
+    >
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-xs p-5">
+        <h3 class="text-sm font-bold mb-3" id="modal-edit-title">
+          Edit Urutan
+        </h3>
+        <input type="hidden" id="edit-id" /><input
+          type="hidden"
+          id="edit-type"
+        />
+        <p
+          class="text-xs text-slate-500 mb-2 truncate"
+          id="edit-name-display"
+        ></p>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1"
+            >Ubah Urutan Ke:</label
+          ><input
+            type="number"
+            id="edit-urutan-val"
+            class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+            value="1"
+          />
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button
+            onclick="tutupModalEdit()"
+            class="flex-1 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold"
+          >
+            Batal</button
+          ><button
+            onclick="updateUrutanDatabase()"
+            class="flex-1 px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold"
+          >
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notif -->
+    <div
+      id="toast"
+      class="fixed top-4 right-4 md:top-5 md:right-5 bg-slate-800 text-white px-3 py-2.5 md:px-4 md:py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full opacity-0 z-50 flex items-center gap-2"
+    >
+      <span id="toast-icon" class="text-sm">✅</span
+      ><span id="toast-msg" class="text-xs font-medium">Berhasil disimpan</span>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- JAVASCRIPT & SUPABASE LOGIC -->
+    <!-- ============================================== -->
+    <script>
+      // ---------------------------------------------------------
+      // 1. KONFIGURASI SUPABASE
+      // ---------------------------------------------------------
+      const SUPABASE_URL = "https://isvbsjjpcqbryifmcesu.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzdmJzampwY3FicnlpZm1jZXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1Mzc0NzcsImV4cCI6MjA5MzExMzQ3N30.SfuoWBRVar9ntsxV_3513Y62EF7lEZukQ3DwGchpYMg";
+      const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      let state = { kitab: [], bagian: [], fasal: [], isi_kitab: [] };
+      let currentWords = [];
+      let currentWordValues = [];
+
+      // ---------------------------------------------------------
+      // 2. FUNGSI UI & RESPONSIVE
+      // ---------------------------------------------------------
+      function showLoader(text = "Memuat Data...") {
+        document.getElementById("loader-text").textContent = text;
+        document.getElementById("global-loader").classList.add("active");
+      }
+      function hideLoader() {
+        document.getElementById("global-loader").classList.remove("active");
+      }
+
+      function showToast(msg, isError = false) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toast-msg").textContent = msg;
+        document.getElementById("toast-icon").textContent = isError
+          ? "❌"
+          : "✅";
+        toast.classList.remove("bg-slate-800", "bg-red-600");
+        toast.classList.add(isError ? "bg-red-600" : "bg-slate-800");
+
+        toast.classList.remove("translate-x-full", "opacity-0");
+        setTimeout(
+          () => toast.classList.add("translate-x-full", "opacity-0"),
+          3000,
+        );
+      }
+
+      // Toggle Sidebar untuk Seluler
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        const isClosed = sidebar.classList.contains("-translate-x-full");
+
+        if (isClosed) {
+          sidebar.classList.remove("-translate-x-full");
+          overlay.classList.remove("hidden");
+          // setTimeout for opacity transition
+          setTimeout(() => overlay.classList.remove("opacity-0"), 10);
+        } else {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("opacity-0");
+          setTimeout(() => overlay.classList.add("hidden"), 300);
+        }
+      }
+
+      // ---------------------------------------------------------
+      // 3. AUTENTIKASI SUPABASE
+      // ---------------------------------------------------------
+      function togglePassword() {
+        const passwordInput = document.getElementById("login-password");
+        const eyeOpen = document.getElementById("eye-icon-open");
+        const eyeClosed = document.getElementById("eye-icon-closed");
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          eyeOpen.classList.remove("hidden");
+          eyeClosed.classList.add("hidden");
+        } else {
+          passwordInput.type = "password";
+          eyeOpen.classList.add("hidden");
+          eyeClosed.classList.remove("hidden");
+        }
+      }
+
+      async function cekStatusLogin() {
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+
+        if (session) {
+          document.getElementById("login-screen").classList.add("hidden");
+          document
+            .getElementById("dashboard-layout")
+            .classList.remove("hidden");
+          loadSemuaDataMaster();
+        } else {
+          document.getElementById("login-screen").classList.remove("hidden");
+          document.getElementById("dashboard-layout").classList.add("hidden");
+        }
+      }
+
+      async function prosesLogin() {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        const errorMsg = document.getElementById("login-error");
+
+        if (!email || !password) {
+          errorMsg.textContent = "Isi Email & Password!";
+          errorMsg.classList.remove("hidden");
+          return;
+        }
+
+        const btn = document.getElementById("btn-login");
+        btn.disabled = true;
+        btn.innerHTML = "Memverifikasi...";
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          errorMsg.textContent = error.message;
+          errorMsg.classList.remove("hidden");
+          btn.disabled = false;
+          btn.innerHTML = "Masuk Dashboard";
+        } else {
+          errorMsg.classList.add("hidden");
+          document.getElementById("login-card").classList.remove("scale-100");
+          document.getElementById("login-card").classList.add("scale-95");
+          document.getElementById("login-screen").classList.add("opacity-0");
+
+          setTimeout(() => {
+            cekStatusLogin();
+            btn.disabled = false;
+            btn.innerHTML = "Masuk Dashboard";
+          }, 500);
+        }
+      }
+
+      async function prosesLogout() {
+        if (!confirm("Keluar dari admin?")) return;
+        await supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+      }
+
+      // ---------------------------------------------------------
+      // 4. LOAD DATA DARI SUPABASE
+      // ---------------------------------------------------------
+      async function loadSemuaDataMaster() {
+        showLoader("Mengambil data...");
+        try {
+          const [resKitab, resBagian, resFasal, resIsiKitab] =
+            await Promise.all([
+              supabaseClient
+                .from("kitab")
+                .select("*")
+                .order("id", { ascending: true }),
+              supabaseClient
+                .from("bagian")
+                .select("*")
+                .order("urutan", { ascending: true }),
+              supabaseClient
+                .from("fasal")
+                .select("*")
+                .order("urutan", { ascending: true }),
+              supabaseClient
+                .from("isi_kitab")
+                .select("id, fasal_id, urutan, teks_arab, teks_indo")
+                .order("urutan", { ascending: true }),
+            ]);
+
+          if (resKitab.error) throw resKitab.error;
+          if (resBagian.error) throw resBagian.error;
+          if (resFasal.error) throw resFasal.error;
+          if (resIsiKitab.error) throw resIsiKitab.error;
+
+          state.kitab = resKitab.data || [];
+          state.bagian = resBagian.data || [];
+          state.fasal = resFasal.data || [];
+          state.isi_kitab = resIsiKitab.data || [];
+
+          populateSelectKitabAll();
+          populateFilterKategoriKitab();
+          populateFilterBagian();
+          renderTableKitab();
+        } catch (err) {
+          console.error("Gagal load data:", err);
+          showToast("Gagal ambil data DB", true);
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // ---------------------------------------------------------
+      // 5. NAVIGASI MENU (Dengan Fitur Auto-Close Seluler)
+      // ---------------------------------------------------------
+      function switchView(viewId, btnElement) {
+        document
+          .querySelectorAll(".view-section")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById(viewId).classList.add("active");
+
+        document.querySelectorAll(".menu-btn").forEach((btn) => {
+          btn.classList.remove("bg-slate-800", "text-emerald-400");
+          btn.classList.add("text-slate-400");
+          if (btn.querySelector("svg"))
+            btn.querySelector("svg").classList.remove("text-emerald-400");
+        });
+        btnElement.classList.add("bg-slate-800", "text-emerald-400");
+        btnElement.classList.remove("text-slate-400");
+        if (btnElement.querySelector("svg"))
+          btnElement.querySelector("svg").classList.add("text-emerald-400");
+
+        if (viewId === "view-kitab") renderTableKitab();
+        if (viewId === "view-bagian") renderTableBagian();
+        if (viewId === "view-fasal") renderTableFasal();
+        if (viewId === "view-kelola-isi") {
+          populateFilterKelolaIsiCategory();
+          renderTableKelolaIsi();
+        }
+
+        // Auto-close sidebar di HP setelah klik menu
+        if (window.innerWidth < 768) {
+          const sidebar = document.getElementById("sidebar");
+          if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+        }
+      }
+
+      // ---------------------------------------------------------
+      // DROPDOWNS & FILTER BASIC
+      // ---------------------------------------------------------
+      function populateSelectKitabAll() {
+        const selects = [
+          "b-kitab",
+          "f-kitab",
+          "filter-f-kitab",
+          "select-kitab",
+        ];
+        selects.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.innerHTML = `<option value="">-- Pilih Kitab --</option>`;
+          state.kitab.forEach(
+            (k) =>
+              (el.innerHTML += `<option value="${k.id}">${k.nama}</option>`),
+          );
+        });
+      }
+
+      function populateFilterKategoriKitab() {
+        const select = document.getElementById("filter-k-kategori");
+        if (!select) return;
+        const categories = [
+          ...new Set(state.kitab.map((k) => k.kategori).filter(Boolean)),
+        ];
+        let html = '<option value="">Semua Kategori</option>';
+        categories.forEach(
+          (c) => (html += `<option value="${c}">${c}</option>`),
+        );
+        select.innerHTML = html;
+      }
+
+      function populateFilterBagian() {
+        const catSelect = document.getElementById("filter-b-kategori");
+        if (!catSelect) return;
+        const categories = [
+          ...new Set(state.kitab.map((k) => k.kategori).filter(Boolean)),
+        ];
+        let catHtml = '<option value="">Kategori</option>';
+        categories.forEach(
+          (c) => (catHtml += `<option value="${c}">${c}</option>`),
+        );
+        catSelect.innerHTML = catHtml;
+        updateFilterKitabForBagian();
+      }
+
+      function updateFilterKitabForBagian() {
+        const kategori = document.getElementById("filter-b-kategori").value;
+        const kitSelect = document.getElementById("filter-b-kitab");
+        if (!kitSelect) return;
+        let filteredKitab = kategori
+          ? state.kitab.filter((k) => k.kategori === kategori)
+          : state.kitab;
+        let kitHtml = '<option value="">Semua Kitab</option>';
+        filteredKitab.forEach(
+          (k) => (kitHtml += `<option value="${k.id}">${k.nama}</option>`),
+        );
+        kitSelect.innerHTML = kitHtml;
+      }
+
+      // Render Tabel Basic
+      function renderTableKitab() {
+        const tbody = document.getElementById("table-kitab");
+        tbody.innerHTML = "";
+        const filterKategori = document.getElementById("filter-k-kategori")
+          ? document.getElementById("filter-k-kategori").value
+          : "";
+        let data = filterKategori
+          ? state.kitab.filter((k) => k.kategori === filterKategori)
+          : [...state.kitab];
+        document.getElementById("k-count").textContent = `${data.length} Data`;
+
+        data.forEach((k) => {
+          tbody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50">
+          <td class="px-3 py-2 font-bold text-slate-500">${k.id}</td>
+          <td class="px-3 py-2 font-semibold truncate max-w-[120px] md:max-w-none">${k.nama}</td>
+          <td class="px-3 py-2"><span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] rounded uppercase tracking-wider font-bold">${k.kategori || "-"}</span></td>
+          <td class="px-3 py-2 text-slate-500 truncate max-w-[100px] md:max-w-none">${k.pengarang || "-"}</td>
+          <td class="px-3 py-2 text-center"><button class="text-red-500 hover:text-red-700 font-bold" onclick="hapusData('kitab', ${k.id})">Hapus</button></td>
+        </tr>`;
+        });
+      }
+
+      function renderTableBagian() {
+        const tbody = document.getElementById("table-bagian");
+        tbody.innerHTML = "";
+        const filterKategori = document.getElementById("filter-b-kategori")
+          ? document.getElementById("filter-b-kategori").value
+          : "";
+        const filterKitabId = document.getElementById("filter-b-kitab")
+          ? document.getElementById("filter-b-kitab").value
+          : "";
+
+        let data = [...state.bagian];
+        if (filterKitabId) {
+          data = data.filter((b) => b.kitab_id == filterKitabId);
+        } else if (filterKategori) {
+          const validKitabIds = state.kitab
+            .filter((k) => k.kategori === filterKategori)
+            .map((k) => k.id);
+          data = data.filter((b) => validKitabIds.includes(b.kitab_id));
+        }
+        data.sort((a, b) => a.urutan - b.urutan);
+        document.getElementById("b-count").textContent = `${data.length} Data`;
+
+        data.forEach((b) => {
+          const nk =
+            state.kitab.find((k) => k.id === b.kitab_id)?.nama || "Unknown";
+          tbody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50">
+          <td class="px-3 py-2"><button onclick="bukaModalEdit(${b.id}, 'bagian', ${b.urutan}, '${b.nama_bagian.replace(/'/g, "\\'")}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-[10px] md:text-xs font-bold font-mono">${b.urutan} ✎</button></td>
+          <td class="px-3 py-2 text-slate-500 truncate max-w-[100px] md:max-w-none">${nk}</td>
+          <td class="px-3 py-2 font-semibold truncate max-w-[120px] md:max-w-none">${b.nama_bagian} <span class="ml-1 text-[9px] bg-emerald-100 text-emerald-700 px-1 py-0.5 rounded uppercase">${b.tipe}</span></td>
+          <td class="px-3 py-2 text-center"><button class="text-red-500 hover:text-red-700 font-bold" onclick="hapusData('bagian', ${b.id})">Hapus</button></td>
+        </tr>`;
+        });
+      }
+
+      function renderTableFasal() {
+        const tbody = document.getElementById("table-fasal");
+        tbody.innerHTML = "";
+        const filterKitabId = document.getElementById("filter-f-kitab").value;
+        const filterBagianId = document.getElementById("filter-f-bagian").value;
+
+        let data = [...state.fasal];
+        if (filterBagianId)
+          data = data.filter((f) => f.bagian_id == filterBagianId);
+        else if (filterKitabId) {
+          const vIds = state.bagian
+            .filter((b) => b.kitab_id == filterKitabId)
+            .map((b) => b.id);
+          data = data.filter((f) => vIds.includes(f.bagian_id));
+        }
+        data.sort((a, b) => a.urutan - b.urutan);
+        document.getElementById("f-count").textContent = `${data.length} Data`;
+
+        data.forEach((f) => {
+          const bag = state.bagian.find((b) => b.id === f.bagian_id);
+          tbody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50">
+          <td class="px-3 py-2"><button onclick="bukaModalEdit(${f.id}, 'fasal', ${f.urutan}, '${f.nama_fasal.replace(/'/g, "\\'")}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-[10px] md:text-xs font-bold font-mono">${f.urutan} ✎</button></td>
+          <td class="px-3 py-2 font-semibold truncate max-w-[130px] md:max-w-none">${f.nama_fasal}</td>
+          <td class="px-3 py-2 text-slate-500 truncate max-w-[100px] md:max-w-none">${bag ? bag.nama_bagian : "-"}</td>
+          <td class="px-3 py-2 text-center"><button class="text-red-500 hover:text-red-700 font-bold" onclick="hapusData('fasal', ${f.id})">Hapus</button></td>
+        </tr>`;
+        });
+      }
+
+      // Dropsowns Bertingkat
+      function generateOptions(dataArray, filterKey, filterVal, labelField) {
+        let html = '<option value="">-- Pilih --</option>';
+        dataArray
+          .filter((d) => d[filterKey] == filterVal)
+          .forEach(
+            (d) =>
+              (html += `<option value="${d.id}">${d[labelField]}</option>`),
+          );
+        return html;
+      }
+
+      function updateDropdownBagianForFasal() {
+        const kId = document.getElementById("f-kitab").value;
+        const select = document.getElementById("f-bagian");
+        select.innerHTML = generateOptions(
+          state.bagian,
+          "kitab_id",
+          kId,
+          "nama_bagian",
+        );
+        select.disabled = !kId;
+      }
+
+      function updateFilterBagianForFasal() {
+        const kId = document.getElementById("filter-f-kitab").value;
+        const select = document.getElementById("filter-f-bagian");
+        select.innerHTML = generateOptions(
+          state.bagian,
+          "kitab_id",
+          kId,
+          "nama_bagian",
+        );
+        if (!kId) select.innerHTML = '<option value="">Semua Bagian</option>';
+        select.disabled = !kId;
+      }
+
+      function loadBagianInput() {
+        const kId = document.getElementById("select-kitab").value;
+        const selectB = document.getElementById("select-bagian");
+        const selectF = document.getElementById("select-fasal");
+        selectB.innerHTML = generateOptions(
+          state.bagian,
+          "kitab_id",
+          kId,
+          "nama_bagian",
+        );
+        selectF.innerHTML = '<option value="">-- Pilih --</option>';
+        selectB.disabled = !kId;
+        selectF.disabled = true;
+      }
+
+      function loadFasalInput() {
+        const bId = document.getElementById("select-bagian").value;
+        const selectF = document.getElementById("select-fasal");
+        selectF.innerHTML = generateOptions(
+          state.fasal,
+          "bagian_id",
+          bId,
+          "nama_fasal",
+        );
+        selectF.disabled = !bId;
+      }
+
+      // ---------------------------------------------------------
+      // KELOLA ISI KITAB (Filter & Table)
+      // ---------------------------------------------------------
+      function populateFilterKelolaIsiCategory() {
+        const selectCat = document.getElementById("filter-ki-kategori");
+        if (!selectCat) return;
+        const categories = [
+          ...new Set(state.kitab.map((k) => k.kategori).filter(Boolean)),
+        ];
+        let html = '<option value="">Semua Kategori</option>';
+        categories.forEach(
+          (c) => (html += `<option value="${c}">${c}</option>`),
+        );
+        selectCat.innerHTML = html;
+        updateKitabKelolaIsi();
+      }
+
+      function updateKitabKelolaIsi() {
+        const kat = document.getElementById("filter-ki-kategori").value;
+        const kit = document.getElementById("filter-ki-kitab");
+        const filteredKitab = kat
+          ? state.kitab.filter((k) => k.kategori === kat)
+          : state.kitab;
+        let html = '<option value="">Semua Kitab</option>';
+        filteredKitab.forEach(
+          (k) => (html += `<option value="${k.id}">${k.nama}</option>`),
+        );
+        kit.innerHTML = html;
+        updateBagianKelolaIsi();
+      }
+
+      function updateBagianKelolaIsi() {
+        const kId = document.getElementById("filter-ki-kitab").value;
+        const bag = document.getElementById("filter-ki-bagian");
+        if (!kId) {
+          bag.innerHTML = '<option value="">Pilih Bagian</option>';
+          bag.disabled = true;
+          updateFasalKelolaIsi();
+          return;
+        }
+        const filteredBagian = state.bagian.filter((b) => b.kitab_id == kId);
+        let html = '<option value="">Semua Bagian</option>';
+        filteredBagian.forEach(
+          (b) => (html += `<option value="${b.id}">${b.nama_bagian}</option>`),
+        );
+        bag.innerHTML = html;
+        bag.disabled = false;
+        updateFasalKelolaIsi();
+      }
+
+      function updateFasalKelolaIsi() {
+        const bId = document.getElementById("filter-ki-bagian").value;
+        const fas = document.getElementById("filter-ki-fasal");
+        if (!bId) {
+          fas.innerHTML = '<option value="">Pilih Fasal</option>';
+          fas.disabled = true;
+          renderTableKelolaIsi();
+          return;
+        }
+        const filteredFasal = state.fasal.filter((f) => f.bagian_id == bId);
+        let html = '<option value="">Semua Fasal</option>';
+        filteredFasal.forEach(
+          (f) => (html += `<option value="${f.id}">${f.nama_fasal}</option>`),
+        );
+        fas.innerHTML = html;
+        fas.disabled = false;
+        renderTableKelolaIsi();
+      }
+
+      function renderTableKelolaIsi() {
+        const tbody = document.getElementById("table-kelola-isi");
+        const fId = document.getElementById("filter-ki-fasal").value;
+
+        if (!fId) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" class="p-6 text-center text-slate-500">Pilih Fasal/Bab terlebih dahulu.</td></tr>';
+          document.getElementById("ki-count").textContent = `0 Data`;
+          return;
+        }
+
+        let data = state.isi_kitab.filter((i) => i.fasal_id == fId);
+        data.sort((a, b) => a.urutan - b.urutan);
+        document.getElementById("ki-count").textContent = `${data.length} Data`;
+
+        if (data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" class="p-6 text-center text-slate-500">Belum ada isi pada Fasal ini.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach((item) => {
+          tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 border-b border-slate-50">
+            <td class="px-3 py-3 align-top">
+              <button onclick="bukaModalEdit(${item.id}, 'isi_kitab', ${item.urutan}, 'Paragraf ke-${item.urutan}')" class="flex items-center justify-center w-full gap-1 bg-slate-100 hover:bg-slate-200 py-1.5 rounded text-[10px] md:text-xs font-bold font-mono">
+                ${item.urutan} ✎
+              </button>
+            </td>
+            <td class="px-3 py-3 font-arabic text-lg md:text-xl text-right text-emerald-800 leading-relaxed min-w-[200px]" dir="rtl">${item.teks_arab}</td>
+            <td class="px-3 py-3 text-slate-600 text-[11px] md:text-xs min-w-[150px] whitespace-normal">${item.teks_indo || "-"}</td>
+            <td class="px-3 py-3 text-center align-top"><button class="text-red-500 hover:text-red-700 font-bold bg-red-50 px-2 py-1 rounded-md border border-red-100" onclick="hapusData('isi_kitab', ${item.id})">Hapus</button></td>
+          </tr>
+        `;
+        });
+      }
+
+      // ---------------------------------------------------------
+      // 8. CRUD MASTER KE SUPABASE
+      // ---------------------------------------------------------
+      async function insertKitab() {
+        const payload = {
+          nama: document.getElementById("k-nama").value,
+          nama_arab: document.getElementById("k-arab").value || null,
+          pengarang: document.getElementById("k-pengarang").value || null,
+          kategori: document.getElementById("k-kategori").value || null,
+          slug: document.getElementById("k-slug").value || null,
+        };
+        if (!payload.nama) return alert("Nama wajib diisi");
+        showLoader("Menyimpan...");
+        const { data, error } = await supabaseClient
+          .from("kitab")
+          .insert([payload])
+          .select()
+          .single();
+        hideLoader();
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+        state.kitab.push(data);
+        populateSelectKitabAll();
+        populateFilterKategoriKitab();
+        populateFilterBagian();
+        renderTableKitab();
+        document.getElementById("k-nama").value = "";
+        showToast("Tersimpan");
+      }
+
+      async function insertBagian() {
+        const payload = {
+          kitab_id: parseInt(document.getElementById("b-kitab").value),
+          nama_bagian: document.getElementById("b-nama").value,
+          tipe: document.getElementById("b-tipe").value,
+          urutan: parseInt(document.getElementById("b-urutan").value),
+        };
+        if (!payload.kitab_id || !payload.nama_bagian)
+          return alert("Lengkapi data");
+        showLoader("Menyimpan...");
+        const { data, error } = await supabaseClient
+          .from("bagian")
+          .insert([payload])
+          .select()
+          .single();
+        hideLoader();
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+        state.bagian.push(data);
+        renderTableBagian();
+        document.getElementById("b-nama").value = "";
+        showToast("Tersimpan");
+      }
+
+      async function insertFasal() {
+        const payload = {
+          bagian_id: parseInt(document.getElementById("f-bagian").value),
+          nama_fasal: document.getElementById("f-nama").value,
+          nama_arab: document.getElementById("f-arab").value || null,
+          urutan: parseInt(document.getElementById("f-urutan").value),
+        };
+        if (!payload.bagian_id || !payload.nama_fasal)
+          return alert("Lengkapi data");
+        showLoader("Menyimpan...");
+        const { data, error } = await supabaseClient
+          .from("fasal")
+          .insert([payload])
+          .select()
+          .single();
+        hideLoader();
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+        state.fasal.push(data);
+        renderTableFasal();
+        document.getElementById("f-nama").value = "";
+        showToast("Tersimpan");
+      }
+
+      async function hapusData(table, id) {
+        if (!confirm(`Hapus permanen ID ${id}? (Data turunan ikut terhapus)`))
+          return;
+        showLoader("Menghapus...");
+        const { error } = await supabaseClient
+          .from(table)
+          .delete()
+          .eq("id", id);
+        hideLoader();
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+
+        state[table] = state[table].filter((d) => d.id !== id);
+        if (table === "kitab") {
+          populateSelectKitabAll();
+          populateFilterKategoriKitab();
+          populateFilterBagian();
+          renderTableKitab();
+        }
+        if (table === "bagian") renderTableBagian();
+        if (table === "fasal") renderTableFasal();
+        if (table === "isi_kitab") renderTableKelolaIsi();
+        showToast("Dihapus");
+      }
+
+      // Modal Edit
+      function bukaModalEdit(id, type, currentUrutan, name) {
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-type").value = type;
+        document.getElementById("edit-urutan-val").value = currentUrutan;
+        document.getElementById("edit-name-display").textContent = name;
+        document.getElementById("modal-edit").classList.remove("hidden");
+        document.getElementById("modal-edit").classList.add("flex");
+      }
+      function tutupModalEdit() {
+        document.getElementById("modal-edit").classList.add("hidden");
+        document.getElementById("modal-edit").classList.remove("flex");
+      }
+
+      async function updateUrutanDatabase() {
+        const id = parseInt(document.getElementById("edit-id").value);
+        const type = document.getElementById("edit-type").value;
+        const newUrutan = parseInt(
+          document.getElementById("edit-urutan-val").value,
+        );
+
+        showLoader("Memperbarui...");
+        const { data, error } = await supabaseClient
+          .from(type)
+          .update({ urutan: newUrutan })
+          .eq("id", id)
+          .select()
+          .single();
+        hideLoader();
+
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+        const idx = state[type].findIndex((d) => d.id === id);
+        if (idx !== -1) state[type][idx].urutan = newUrutan;
+
+        if (type === "bagian") renderTableBagian();
+        else if (type === "fasal") renderTableFasal();
+        else if (type === "isi_kitab") renderTableKelolaIsi();
+
+        tutupModalEdit();
+        showToast("Diperbarui");
+      }
+
+      // ---------------------------------------------------------
+      // 9. LOGIKA AUTO-SPLIT MUFRODAT
+      // ---------------------------------------------------------
+      function prosesPecahKata() {
+        const teksArab = document.getElementById("input-arab").value.trim();
+        if (!teksArab) return alert("Teks Kosong");
+        currentWords = teksArab.split(/\s+/).filter(Boolean);
+        currentWordValues = currentWords.map(() => ({ arti: "", tarkib: "" }));
+        renderMufrodatRows(true);
+      }
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function syncCurrentWordValues() {
+        currentWordValues = currentWords.map((_, i) => ({
+          arti: document.getElementById(`arti-${i}`)?.value.trim() || "",
+          tarkib: document.getElementById(`tarkib-${i}`)?.value.trim() || "",
+        }));
+      }
+
+      function renderMufrodatRows(scroll = true) {
+        const tbody = document.getElementById("tabel-body-mufrodat");
+        tbody.innerHTML = "";
+        currentWords.forEach((kata, i) => {
+          const values = currentWordValues[i] || { arti: "", tarkib: "" };
+          const canUp = i > 0;
+          const canDown = i < currentWords.length - 1;
+          tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 border-b border-slate-50">
+            <td class="px-2 py-2 text-center text-[10px] font-bold text-slate-400">${i + 1}</td>
+            <td class="px-2 py-2 text-right font-arabic text-xl text-emerald-800" dir="rtl">${escapeHtml(kata)}</td>
+            <td class="px-2 py-2"><input type="text" id="arti-${i}" value="${escapeHtml(values.arti)}" class="w-full border rounded p-1.5 outline-none focus:border-blue-500 text-xs"></td>
+            <td class="px-2 py-2"><input type="text" id="tarkib-${i}" value="${escapeHtml(values.tarkib)}" class="w-full border rounded p-1.5 outline-none focus:border-emerald-500 text-xs"></td>
+            <td class="px-2 py-2">
+              <div class="flex flex-col gap-1">
+                <button type="button" onclick="gabungKata(${i}, 'atas')" class="w-full rounded bg-slate-100 text-slate-700 text-[12px] py-1 hover:bg-slate-200" ${canUp ? "" : "disabled"} aria-label="Gabung dengan kata atas">↑</button>
+                <button type="button" onclick="gabungKata(${i}, 'bawah')" class="w-full rounded bg-slate-100 text-slate-700 text-[12px] py-1 hover:bg-slate-200" ${canDown ? "" : "disabled"} aria-label="Gabung dengan kata bawah">↓</button>
+              </div>
+            </td>
+          </tr>`;
+        });
+        document.getElementById("area-mufrodat").classList.remove("hidden");
+        if (scroll) {
+          setTimeout(
+            () =>
+              document
+                .getElementById("area-mufrodat")
+                .scrollIntoView({ behavior: "smooth", block: "start" }),
+            100,
+          );
+        }
+      }
+
+      function gabungKata(index, arah) {
+        if (currentWords.length === 0) return;
+        syncCurrentWordValues();
+
+        if (arah === "atas" && index > 0) {
+          currentWords[index - 1] =
+            `${currentWords[index - 1]} ${currentWords[index]}`;
+          currentWordValues[index - 1] = {
+            arti: currentWordValues[index - 1].arti,
+            tarkib: currentWordValues[index - 1].tarkib,
+          };
+          currentWords.splice(index, 1);
+          currentWordValues.splice(index, 1);
+          renderMufrodatRows(false);
+          return;
+        }
+
+        if (arah === "bawah" && index < currentWords.length - 1) {
+          currentWords[index] =
+            `${currentWords[index]} ${currentWords[index + 1]}`;
+          currentWordValues[index] = {
+            arti: currentWordValues[index].arti,
+            tarkib: currentWordValues[index].tarkib,
+          };
+          currentWords.splice(index + 1, 1);
+          currentWordValues.splice(index + 1, 1);
+          renderMufrodatRows(false);
+          return;
+        }
+      }
+
+      function batalPecah() {
+        document.getElementById("area-mufrodat").classList.add("hidden");
+        document.getElementById("tabel-body-mufrodat").innerHTML = "";
+        currentWords = [];
+        currentWordValues = [];
+      }
+
+      async function simpanIsiDanMufrodatKeDB() {
+        const fasalId = parseInt(document.getElementById("select-fasal").value);
+        if (!fasalId) return alert("Pilih Fasal!");
+
+        const teksArab = document.getElementById("input-arab").value.trim();
+        const teksIndo = document.getElementById("input-indo").value.trim();
+        const penjelasan = document
+          .getElementById("input-penjelasan")
+          .value.trim();
+
+        showLoader("Menyimpan ke DB...");
+        try {
+          const { data: lastData } = await supabaseClient
+            .from("isi_kitab")
+            .select("urutan")
+            .eq("fasal_id", fasalId)
+            .order("urutan", { ascending: false })
+            .limit(1);
+          let nextUrutan =
+            lastData && lastData.length > 0 ? lastData[0].urutan + 1 : 1;
+
+          const { data: isiKitabData, error: errIsi } = await supabaseClient
+            .from("isi_kitab")
+            .insert([
+              {
+                fasal_id: fasalId,
+                teks_arab: teksArab,
+                teks_indo: teksIndo || null,
+                penjelasan: penjelasan || null,
+                urutan: nextUrutan,
+              },
+            ])
+            .select()
+            .single();
+          if (errIsi) throw errIsi;
+
+          state.isi_kitab.push(isiKitabData);
+
+          const mufrodatPayload = currentWords.map((kata, i) => ({
+            isi_kitab_id: isiKitabData.id,
+            kata_arab: kata,
+            arti: document.getElementById(`arti-${i}`).value.trim() || null,
+            tarkib: document.getElementById(`tarkib-${i}`).value.trim() || null,
+            urutan_kata: i + 1,
+          }));
+
+          if (mufrodatPayload.length > 0) {
+            const { error: errMufrodat } = await supabaseClient
+              .from("mufrodat")
+              .insert(mufrodatPayload);
+            if (errMufrodat) throw errMufrodat;
+          }
+
+          showToast("Disimpan!");
+          document.getElementById("input-arab").value = "";
+          document.getElementById("input-indo").value = "";
+          document.getElementById("input-penjelasan").value = "";
+          batalPecah();
+          document
+            .getElementById("main-scroll-area")
+            .scrollTo({ top: 0, behavior: "smooth" });
+
+          if (
+            document
+              .getElementById("view-kelola-isi")
+              .classList.contains("active")
+          )
+            renderTableKelolaIsi();
+        } catch (err) {
+          showToast("Error: " + err.message, true);
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // ==========================================
+      window.onload = () => {
+        cekStatusLogin();
+      };
+    </script>
+  </body>
+</html>
