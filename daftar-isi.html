@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Isi Kitab - Tinta Guru Muda (TiGuDa)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="Daftar isi dan fasal kitab kuning untuk memudahkan pembelajaran dan navigasi kajian."
+    />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        scroll-behavior: smooth;
+        background-color: #f8fafc; /* slate-50 */
+      }
+      .font-arabic {
+        font-family: "Amiri Quran", serif;
+        line-height: 2.2;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800 antialiased min-h-screen flex flex-col">
+    
+    <!-- Navbar (Sederhana) -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3">
+        <div class="flex justify-between items-center">
+          <a href="index.html" class="flex items-center gap-2 group">
+            <div class="bg-emerald-500 text-white p-1.5 rounded-lg group-hover:bg-emerald-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            </div>
+            <span class="font-bold text-lg tracking-tight">TiGuDa</span>
+          </a>
+          <a href="kitab-kuning.html" class="text-sm font-semibold text-slate-500 hover:text-emerald-600 flex items-center gap-1 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Koleksi Kitab
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 sm:px-6 py-8">
+      
+      <!-- Loading Indicator -->
+      <div id="loading-indicator" class="flex flex-col items-center justify-center py-20">
+        <svg class="animate-spin h-10 w-10 text-emerald-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <p class="text-slate-500 font-medium">Memuat Daftar Isi...</p>
+      </div>
+
+      <!-- Area Header Kitab -->
+      <div id="header-container"></div>
+      
+      <!-- Area Daftar Fasal -->
+      <div id="fasal-container" class="mt-8 hidden">
+        <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Daftar Fasal / Bab</h2>
+        <div id="fasal-list" class="space-y-4">
+          <!-- Item daftar isi akan dirender di sini via JS -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Script Koneksi Supabase & Render Logic -->
+    <script>
+      // Kredensial Supabase
+      const SUPABASE_URL = 'https://isvbsjjpcqbryifmcesu.supabase.co'; 
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzdmJzampwY3FicnlpZm1jZXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1Mzc0NzcsImV4cCI6MjA5MzExMzQ3N30.SfuoWBRVar9ntsxV_3513Y62EF7lEZukQ3DwGchpYMg'; 
+      const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Ambil ID dari URL Parameter (Bisa kitab_id atau bagian_id)
+      const urlParams = new URLSearchParams(window.location.search);
+      let bagianId = urlParams.get('bagian_id');
+      let kitabId = urlParams.get('id'); // Jaga-jaga jika menggunakan ID kitab
+
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const headerContainer = document.getElementById('header-container');
+      const fasalContainer = document.getElementById('fasal-container');
+      const fasalList = document.getElementById('fasal-list');
+
+      async function loadDaftarIsi() {
+        try {
+          let kitab = null;
+          let listBagian = [];
+          let listFasal = [];
+
+          // SKENARIO 1: URL menggunakan "bagian_id" (Sesuai dengan klik dari kitab-kuning.html)
+          if (bagianId) {
+            // 1. Ambil data Bagian tersebut
+            const { data: bagianSingle, error: errBagian } = await supabaseClient.from('bagian').select('*').eq('id', bagianId).single();
+            if (errBagian) throw errBagian;
+
+            // 2. Ambil data Kitab Induknya
+            const { data: kitabData, error: errKitab } = await supabaseClient.from('kitab').select('*').eq('id', bagianSingle.kitab_id).single();
+            if (errKitab) throw errKitab;
+
+            kitab = kitabData;
+            listBagian = [bagianSingle];
+
+            // 3. Ambil daftar Fasal HANYA untuk bagian yang dipilih
+            const { data: fasalData, error: errFasal } = await supabaseClient.from('fasal').select('*').eq('bagian_id', bagianId).order('urutan');
+            if (errFasal) throw errFasal;
+            listFasal = fasalData || [];
+          } 
+          // SKENARIO 2: URL menggunakan "id" (kitab_id)
+          else if (kitabId) {
+            // 1. Ambil data Kitab
+            const { data: kitabData, error: errKitab } = await supabaseClient.from('kitab').select('*').eq('id', kitabId).single();
+            if(errKitab) throw errKitab;
+            kitab = kitabData;
+
+            // 2. Ambil SEMUA bagian
+            const { data: bagianData, error: errBagian } = await supabaseClient.from('bagian').select('*').eq('kitab_id', kitabId).order('urutan');
+            if(errBagian) throw errBagian;
+            listBagian = bagianData || [];
+
+            // 3. Ambil SEMUA fasal
+            if(listBagian.length > 0) {
+              const bagianIds = listBagian.map(b => b.id);
+              const { data: fasalData, error: errFasal } = await supabaseClient.from('fasal').select('*').in('bagian_id', bagianIds).order('urutan');
+              if(errFasal) throw errFasal;
+              listFasal = fasalData || [];
+            }
+          } 
+          // SKENARIO 3: MODE TESTING (Tanpa parameter di URL)
+          else {
+            // Cari bagian pertama di database lalu arahkan ke sana
+            const { data: firstBagian, error: errFirst } = await supabaseClient.from('bagian').select('id').limit(1).single();
+            if(!errFirst && firstBagian) {
+              // Rekursif memanggil ulang dengan id bagian simulasi
+              bagianId = firstBagian.id;
+              return loadDaftarIsi();
+            } else {
+              throw new Error("Tidak ada data Kitab atau Bagian sama sekali di Database.");
+            }
+          }
+
+          // Render tampilan
+          renderHeader(kitab, listBagian.length === 1 ? listBagian[0] : null);
+          renderFasalList(listBagian, listFasal);
+
+        } catch(error) {
+          console.error(error);
+          tampilkanError("Gagal memuat data dari server atau ID tidak ditemukan.");
+        } finally {
+          loadingIndicator.classList.add('hidden');
+        }
+      }
+
+      // Fungsi render header, menerima parameter tambahan "bagianSpesifik"
+      function renderHeader(kitab, bagianSpesifik = null) {
+        // Tampilkan badge "Bagian" jika pengguna mengklik bagian spesifik (Misal: Matan / Jilid 1)
+        const badgeBagian = bagianSpesifik 
+          ? `<div class="mt-4"><span class="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-bold border border-emerald-200 uppercase tracking-widest">${bagianSpesifik.nama_bagian}</span></div>` 
+          : '';
+
+        headerContainer.innerHTML = `
+          <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 text-center relative overflow-hidden">
+            <div class="absolute top-0 inset-x-0 h-2 bg-emerald-500"></div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">${kitab.nama}</h1>
+            ${kitab.nama_arab ? `<p class="font-arabic text-2xl text-emerald-800 mb-3" dir="rtl">${kitab.nama_arab}</p>` : ''}
+            
+            ${badgeBagian}
+
+            <div class="flex flex-wrap justify-center gap-2 mt-4">
+              ${kitab.kategori ? `<span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-bold uppercase tracking-wide">${kitab.kategori}</span>` : ''}
+              ${kitab.pengarang ? `<span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-full font-bold">Karya: ${kitab.pengarang}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderFasalList(bagian, fasal) {
+        if(fasal.length === 0) {
+          fasalContainer.classList.remove('hidden');
+          fasalList.innerHTML = '<p class="text-center text-slate-500 py-8 bg-white rounded-xl border border-slate-200">Belum ada daftar isi/fasal untuk bagian kitab ini.</p>';
+          return;
+        }
+
+        let html = '';
+        
+        fasal.forEach((f, index) => {
+          const bag = bagian.find(b => b.id === f.bagian_id);
+          const namaBagian = bag ? bag.nama_bagian : '';
+
+          html += `
+            <a href="baca-kitab.html?fasal_id=${f.id}" class="block group bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-xl p-4 sm:p-5 transition-all shadow-sm hover:shadow-md relative overflow-hidden">
+              <div class="flex items-start gap-4">
+                
+                <!-- Nomor Urut -->
+                <div class="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 flex items-center justify-center font-bold text-sm shrink-0 transition-colors z-10">
+                  ${index + 1}
+                </div>
+                
+                <!-- Konten Teks Indonesia -->
+                <div class="flex-1 min-w-0 z-10 flex flex-col justify-center mt-1 sm:mt-2">
+                  <h3 class="font-bold text-slate-800 group-hover:text-emerald-800 text-base sm:text-lg transition-colors leading-snug pr-2">${f.nama_fasal}</h3>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="text-[11px] font-bold text-slate-500 px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-md tracking-wider uppercase shadow-sm group-hover:bg-white transition-colors">${namaBagian}</span>
+                  </div>
+                </div>
+
+                <!-- Teks Arab (Posisi Kanan - Mode Desktop) -->
+                ${f.nama_arab ? `
+                <div class="hidden sm:flex flex-1 items-center justify-end shrink-0 pl-4 z-10">
+                  <p class="font-arabic text-emerald-700 text-2xl lg:text-3xl text-right leading-normal" dir="rtl">${f.nama_arab}</p>
+                </div>
+                ` : ''}
+
+                <!-- Panah Kanan -->
+                <div class="text-slate-300 group-hover:text-emerald-500 transition-colors hidden md:flex items-center z-10 shrink-0 ml-2 mt-2">
+                  <svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Teks Arab (Posisi Bawah - Mode Mobile) -->
+              ${f.nama_arab ? `
+              <div class="sm:hidden mt-4 pt-3 border-t border-slate-100/70">
+                <p class="font-arabic text-emerald-700 text-2xl text-right leading-normal" dir="rtl">${f.nama_arab}</p>
+              </div>
+              ` : ''}
+            </a>
+          `;
+        });
+
+        fasalList.innerHTML = html;
+        fasalContainer.classList.remove('hidden');
+      }
+
+      function tampilkanError(pesanError) {
+        headerContainer.innerHTML = `
+          <div class="bg-red-50 text-red-600 px-6 py-8 rounded-2xl border border-red-100 max-w-lg mx-auto shadow-sm text-center">
+            <svg class="w-12 h-12 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h1 class="text-xl font-bold mb-2">Terjadi Kesalahan</h1>
+            <p class="text-sm">${pesanError}</p>
+            <a href="kitab-kuning.html" class="inline-block mt-4 px-4 py-2 bg-red-600 text-white rounded-lg font-bold text-sm hover:bg-red-700 transition-colors">Kembali ke Koleksi</a>
+          </div>
+        `;
+      }
+
+      // Jalankan fungsi fetch saat halaman dimuat
+      window.onload = loadDaftarIsi;
+    </script>
+  </body>
+</html>
