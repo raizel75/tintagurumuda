@@ -1111,6 +1111,7 @@
                       </th>
                       <th class="px-2 py-2 border-b">Arti</th>
                       <th class="px-2 py-2 border-b">Tarkib</th>
+                      <th class="px-2 py-2 border-b">Aksi</th>
                     </tr>
                   </thead>
                   <tbody
@@ -1221,6 +1222,7 @@
 
       let state = { kitab: [], bagian: [], fasal: [], isi_kitab: [] };
       let currentWords = [];
+      let currentWordValues = [];
 
       // ---------------------------------------------------------
       // 2. FUNGSI UI & RESPONSIVE
@@ -1913,31 +1915,95 @@
         const teksArab = document.getElementById("input-arab").value.trim();
         if (!teksArab) return alert("Teks Kosong");
         currentWords = teksArab.split(/\s+/).filter(Boolean);
+        currentWordValues = currentWords.map(() => ({ arti: "", tarkib: "" }));
+        renderMufrodatRows(true);
+      }
 
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function syncCurrentWordValues() {
+        currentWordValues = currentWords.map((_, i) => ({
+          arti: document.getElementById(`arti-${i}`)?.value.trim() || "",
+          tarkib: document.getElementById(`tarkib-${i}`)?.value.trim() || "",
+        }));
+      }
+
+      function renderMufrodatRows(scroll = true) {
         const tbody = document.getElementById("tabel-body-mufrodat");
         tbody.innerHTML = "";
         currentWords.forEach((kata, i) => {
+          const values = currentWordValues[i] || { arti: "", tarkib: "" };
+          const canUp = i > 0;
+          const canDown = i < currentWords.length - 1;
           tbody.innerHTML += `
           <tr class="hover:bg-slate-50 border-b border-slate-50">
             <td class="px-2 py-2 text-center text-[10px] font-bold text-slate-400">${i + 1}</td>
-            <td class="px-2 py-2 text-right font-arabic text-xl text-emerald-800" dir="rtl">${kata}</td>
-            <td class="px-2 py-2"><input type="text" id="arti-${i}" class="w-full border rounded p-1.5 outline-none focus:border-blue-500 text-xs"></td>
-            <td class="px-2 py-2"><input type="text" id="tarkib-${i}" class="w-full border rounded p-1.5 outline-none focus:border-emerald-500 text-xs"></td>
+            <td class="px-2 py-2 text-right font-arabic text-xl text-emerald-800" dir="rtl">${escapeHtml(kata)}</td>
+            <td class="px-2 py-2"><input type="text" id="arti-${i}" value="${escapeHtml(values.arti)}" class="w-full border rounded p-1.5 outline-none focus:border-blue-500 text-xs"></td>
+            <td class="px-2 py-2"><input type="text" id="tarkib-${i}" value="${escapeHtml(values.tarkib)}" class="w-full border rounded p-1.5 outline-none focus:border-emerald-500 text-xs"></td>
+            <td class="px-2 py-2">
+              <div class="flex flex-col gap-1">
+                <button type="button" onclick="gabungKata(${i}, 'atas')" class="w-full rounded bg-slate-100 text-slate-700 text-[12px] py-1 hover:bg-slate-200" ${canUp ? "" : "disabled"} aria-label="Gabung dengan kata atas">↑</button>
+                <button type="button" onclick="gabungKata(${i}, 'bawah')" class="w-full rounded bg-slate-100 text-slate-700 text-[12px] py-1 hover:bg-slate-200" ${canDown ? "" : "disabled"} aria-label="Gabung dengan kata bawah">↓</button>
+              </div>
+            </td>
           </tr>`;
         });
         document.getElementById("area-mufrodat").classList.remove("hidden");
-        setTimeout(
-          () =>
-            document
-              .getElementById("area-mufrodat")
-              .scrollIntoView({ behavior: "smooth", block: "start" }),
-          100,
-        );
+        if (scroll) {
+          setTimeout(
+            () =>
+              document
+                .getElementById("area-mufrodat")
+                .scrollIntoView({ behavior: "smooth", block: "start" }),
+            100,
+          );
+        }
+      }
+
+      function gabungKata(index, arah) {
+        if (currentWords.length === 0) return;
+        syncCurrentWordValues();
+
+        if (arah === "atas" && index > 0) {
+          currentWords[index - 1] =
+            `${currentWords[index - 1]} ${currentWords[index]}`;
+          currentWordValues[index - 1] = {
+            arti: currentWordValues[index - 1].arti,
+            tarkib: currentWordValues[index - 1].tarkib,
+          };
+          currentWords.splice(index, 1);
+          currentWordValues.splice(index, 1);
+          renderMufrodatRows(false);
+          return;
+        }
+
+        if (arah === "bawah" && index < currentWords.length - 1) {
+          currentWords[index] =
+            `${currentWords[index]} ${currentWords[index + 1]}`;
+          currentWordValues[index] = {
+            arti: currentWordValues[index].arti,
+            tarkib: currentWordValues[index].tarkib,
+          };
+          currentWords.splice(index + 1, 1);
+          currentWordValues.splice(index + 1, 1);
+          renderMufrodatRows(false);
+          return;
+        }
       }
 
       function batalPecah() {
         document.getElementById("area-mufrodat").classList.add("hidden");
         document.getElementById("tabel-body-mufrodat").innerHTML = "";
+        currentWords = [];
+        currentWordValues = [];
       }
 
       async function simpanIsiDanMufrodatKeDB() {
