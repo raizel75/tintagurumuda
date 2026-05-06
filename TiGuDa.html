@@ -384,6 +384,25 @@
             </svg>
             Kelola Isi Kitab
           </button>
+          <button
+            onclick="switchView('view-mufrodat', this)"
+            class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-9 0V1m10 3V1m0 3l1 1v16a2 2 0 01-2 2H6a2 2 0 01-2-2V5l1-1z"
+              />
+            </svg>
+            Kelola Mufrodat
+          </button>
 
           <p
             class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 mt-5 px-3"
@@ -954,7 +973,8 @@
                       <th class="px-3 py-2 w-16">No</th>
                       <th class="px-3 py-2 w-1/2">Teks Arab</th>
                       <th class="px-3 py-2">Terjemahan</th>
-                      <th class="px-3 py-2 text-center w-20">Aksi</th>
+                      <th class="px-3 py-2">Penjelasan</th>
+                      <th class="px-3 py-2 text-center w-24">Aksi</th>
                     </tr>
                   </thead>
                   <tbody
@@ -964,6 +984,139 @@
                     <tr>
                       <td
                         colspan="4"
+                        class="p-6 text-center text-slate-500 text-xs"
+                      >
+                        Pilih filter di atas untuk memunculkan data.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- VIEW: KELOLA MUFRODAT -->
+          <section
+            id="view-mufrodat"
+            class="view-section max-w-5xl mx-auto space-y-4"
+          >
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800">
+                Kelola Mufrodat
+              </h1>
+              <p class="text-slate-500 mt-1 text-[11px] md:text-xs">
+                Kelola kosakata dari isi kitab.
+              </p>
+            </div>
+
+            <div
+              class="bg-white p-4 rounded-xl shadow-sm border border-slate-200"
+            >
+              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Kategori</label
+                  >
+                  <select
+                    id="filter-m-kategori"
+                    onchange="updateKitabMufrodat()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  >
+                    <option value="">Semua Kategori</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Kitab</label
+                  >
+                  <select
+                    id="filter-m-kitab"
+                    onchange="updateBagianMufrodat()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  >
+                    <option value="">Semua Kitab</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Bagian</label
+                  >
+                  <select
+                    id="filter-m-bagian"
+                    onchange="updateFasalMufrodat()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none disabled:opacity-50"
+                    disabled
+                  >
+                    <option value="">Pilih Bagian</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Fasal/Bab</label
+                  >
+                  <select
+                    id="filter-m-fasal"
+                    onchange="updateIsiKitabMufrodat()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none disabled:opacity-50"
+                    disabled
+                  >
+                    <option value="">Pilih Fasal</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider"
+                    >Isi Kitab</label
+                  >
+                  <select
+                    id="filter-m-isi"
+                    onchange="renderTableMufrodat()"
+                    class="w-full border rounded-lg p-2 text-xs bg-slate-50 focus:ring-1 focus:ring-emerald-500 outline-none disabled:opacity-50"
+                    disabled
+                  >
+                    <option value="">Pilih Isi</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col"
+            >
+              <div
+                class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center"
+              >
+                <h2 class="font-bold text-sm">Daftar Mufrodat</h2>
+                <span
+                  class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold"
+                  id="m-count"
+                  >0 Data</span
+                >
+              </div>
+
+              <div
+                class="overflow-x-auto overflow-y-auto max-h-[400px] md:max-h-[500px] custom-scrollbar"
+              >
+                <table class="w-full text-left text-xs min-w-[600px]">
+                  <thead
+                    class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] sticky top-0 shadow-sm z-10"
+                  >
+                    <tr>
+                      <th class="px-3 py-2">Kata Arab</th>
+                      <th class="px-3 py-2">Arti</th>
+                      <th class="px-3 py-2">Tarkib</th>
+                      <th class="px-3 py-2 text-center w-16">Urutan</th>
+                      <th class="px-3 py-2 text-center w-24">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-mufrodat" class="divide-y divide-slate-100">
+                    <tr>
+                      <td
+                        colspan="5"
                         class="p-6 text-center text-slate-500 text-xs"
                       >
                         Pilih filter di atas untuk memunculkan data.
@@ -1196,6 +1349,108 @@
       </div>
     </div>
 
+    <!-- Modal Edit Entry -->
+    <div
+      id="modal-edit-entry"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4"
+    >
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-5">
+        <h3 class="text-sm font-bold mb-3" id="modal-edit-entry-title">
+          Edit Data
+        </h3>
+        <input type="hidden" id="edit-entry-id" />
+        <input type="hidden" id="edit-entry-type" />
+        <div id="edit-entry-isi-fields" class="edit-entry-isi space-y-4 hidden">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Teks Arab</label
+            >
+            <textarea
+              id="edit-teks-arab"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+              rows="3"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Terjemahan</label
+            >
+            <textarea
+              id="edit-teks-indo"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+              rows="2"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Penjelasan</label
+            >
+            <textarea
+              id="edit-penjelasan"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+              rows="2"
+            ></textarea>
+          </div>
+        </div>
+        <div
+          id="edit-entry-mufrodat-fields"
+          class="edit-entry-mufrodat space-y-4 hidden"
+        >
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Kata Arab</label
+            >
+            <input
+              id="edit-kata-arab"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Arti</label
+            >
+            <input
+              id="edit-arti"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1"
+              >Tarkib</label
+            >
+            <input
+              id="edit-tarkib"
+              class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+            />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1"
+            >Urutan</label
+          >
+          <input
+            id="edit-urutan-val-entry"
+            type="number"
+            class="w-full border rounded-lg p-2.5 text-xs outline-none focus:border-emerald-500"
+          />
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button
+            onclick="tutupModalEditEntry()"
+            class="flex-1 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold"
+          >
+            Batal
+          </button>
+          <button
+            onclick="updateEditEntryDatabase()"
+            class="flex-1 px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold"
+          >
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Notif -->
     <div
       id="toast"
@@ -1220,7 +1475,13 @@
         SUPABASE_ANON_KEY,
       );
 
-      let state = { kitab: [], bagian: [], fasal: [], isi_kitab: [] };
+      let state = {
+        kitab: [],
+        bagian: [],
+        fasal: [],
+        isi_kitab: [],
+        mufrodat: [],
+      };
       let currentWords = [];
       let currentWordValues = [];
 
@@ -1372,7 +1633,9 @@
                 .order("urutan", { ascending: true }),
               supabaseClient
                 .from("isi_kitab")
-                .select("id, fasal_id, urutan, teks_arab, teks_indo")
+                .select(
+                  "id, fasal_id, urutan, teks_arab, teks_indo, penjelasan",
+                )
                 .order("urutan", { ascending: true }),
             ]);
 
@@ -1381,14 +1644,31 @@
           if (resFasal.error) throw resFasal.error;
           if (resIsiKitab.error) throw resIsiKitab.error;
 
+          let resMufrodat = { data: [], error: null };
+          try {
+            resMufrodat = await supabaseClient
+              .from("mufrodat")
+              .select("*")
+              .order("urutan_kata", { ascending: true });
+          } catch (error) {
+            console.warn("Mufrodat table not available:", error);
+          }
+          if (resMufrodat.error) {
+            console.warn("Mufrodat load error:", resMufrodat.error);
+            showToast("Tabel mufrodat tidak tersedia", true);
+            resMufrodat.data = [];
+          }
+
           state.kitab = resKitab.data || [];
           state.bagian = resBagian.data || [];
           state.fasal = resFasal.data || [];
           state.isi_kitab = resIsiKitab.data || [];
+          state.mufrodat = resMufrodat.data || [];
 
           populateSelectKitabAll();
           populateFilterKategoriKitab();
           populateFilterBagian();
+          populateFilterMufrodat();
           renderTableKitab();
         } catch (err) {
           console.error("Gagal load data:", err);
@@ -1421,6 +1701,10 @@
         if (viewId === "view-kitab") renderTableKitab();
         if (viewId === "view-bagian") renderTableBagian();
         if (viewId === "view-fasal") renderTableFasal();
+        if (viewId === "view-mufrodat") {
+          populateFilterMufrodat();
+          renderTableMufrodat();
+        }
         if (viewId === "view-kelola-isi") {
           populateFilterKelolaIsiCategory();
           renderTableKelolaIsi();
@@ -1481,6 +1765,20 @@
         updateFilterKitabForBagian();
       }
 
+      function populateFilterMufrodat() {
+        const catSelect = document.getElementById("filter-m-kategori");
+        if (!catSelect) return;
+        const categories = [
+          ...new Set(state.kitab.map((k) => k.kategori).filter(Boolean)),
+        ];
+        let catHtml = '<option value="">Semua Kategori</option>';
+        categories.forEach(
+          (c) => (catHtml += `<option value="${c}">${c}</option>`),
+        );
+        catSelect.innerHTML = catHtml;
+        updateKitabMufrodat();
+      }
+
       function updateFilterKitabForBagian() {
         const kategori = document.getElementById("filter-b-kategori").value;
         const kitSelect = document.getElementById("filter-b-kitab");
@@ -1493,6 +1791,84 @@
           (k) => (kitHtml += `<option value="${k.id}">${k.nama}</option>`),
         );
         kitSelect.innerHTML = kitHtml;
+      }
+
+      function updateKitabMufrodat() {
+        const kategori = document.getElementById("filter-m-kategori").value;
+        const kitSelect = document.getElementById("filter-m-kitab");
+        if (!kitSelect) return;
+        let filteredKitab = kategori
+          ? state.kitab.filter((k) => k.kategori === kategori)
+          : state.kitab;
+        let kitHtml = '<option value="">Semua Kitab</option>';
+        filteredKitab.forEach(
+          (k) => (kitHtml += `<option value="${k.id}">${k.nama}</option>`),
+        );
+        kitSelect.innerHTML = kitHtml;
+        updateBagianMufrodat();
+      }
+
+      function updateBagianMufrodat() {
+        const kId = document.getElementById("filter-m-kitab").value;
+        const bagSelect = document.getElementById("filter-m-bagian");
+        if (!bagSelect) return;
+        if (!kId) {
+          bagSelect.innerHTML = '<option value="">Pilih Bagian</option>';
+          bagSelect.disabled = true;
+          updateFasalMufrodat();
+          return;
+        }
+        const filteredBagian = state.bagian.filter((b) => b.kitab_id == kId);
+        let bagHtml = '<option value="">Semua Bagian</option>';
+        filteredBagian.forEach(
+          (b) =>
+            (bagHtml += `<option value="${b.id}">${b.nama_bagian}</option>`),
+        );
+        bagSelect.innerHTML = bagHtml;
+        bagSelect.disabled = false;
+        updateFasalMufrodat();
+      }
+
+      function updateFasalMufrodat() {
+        const bId = document.getElementById("filter-m-bagian").value;
+        const fasSelect = document.getElementById("filter-m-fasal");
+        if (!fasSelect) return;
+        if (!bId) {
+          fasSelect.innerHTML = '<option value="">Pilih Fasal</option>';
+          fasSelect.disabled = true;
+          updateIsiKitabMufrodat();
+          return;
+        }
+        const filteredFasal = state.fasal.filter((f) => f.bagian_id == bId);
+        let fasHtml = '<option value="">Semua Fasal</option>';
+        filteredFasal.forEach(
+          (f) =>
+            (fasHtml += `<option value="${f.id}">${f.nama_fasal}</option>`),
+        );
+        fasSelect.innerHTML = fasHtml;
+        fasSelect.disabled = false;
+        updateIsiKitabMufrodat();
+      }
+
+      function updateIsiKitabMufrodat() {
+        const fId = document.getElementById("filter-m-fasal").value;
+        const isiSelect = document.getElementById("filter-m-isi");
+        if (!isiSelect) return;
+        if (!fId) {
+          isiSelect.innerHTML = '<option value="">Pilih Isi</option>';
+          isiSelect.disabled = true;
+          renderTableMufrodat();
+          return;
+        }
+        const filteredIsi = state.isi_kitab.filter((i) => i.fasal_id == fId);
+        let isiHtml = '<option value="">Semua Isi</option>';
+        filteredIsi.forEach(
+          (i) =>
+            (isiHtml += `<option value="${i.id}">Paragraf ${i.urutan}</option>`),
+        );
+        isiSelect.innerHTML = isiHtml;
+        isiSelect.disabled = false;
+        renderTableMufrodat();
       }
 
       // Render Tabel Basic
@@ -1577,6 +1953,45 @@
           <td class="px-3 py-2 font-semibold truncate max-w-[130px] md:max-w-none">${f.nama_fasal}</td>
           <td class="px-3 py-2 text-slate-500 truncate max-w-[100px] md:max-w-none">${bag ? bag.nama_bagian : "-"}</td>
           <td class="px-3 py-2 text-center"><button class="text-red-500 hover:text-red-700 font-bold" onclick="hapusData('fasal', ${f.id})">Hapus</button></td>
+        </tr>`;
+        });
+      }
+
+      function renderTableMufrodat() {
+        const tbody = document.getElementById("table-mufrodat");
+        const isiId = document.getElementById("filter-m-isi").value;
+
+        if (!isiId) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="p-6 text-center text-slate-500">Pilih Isi Kitab terlebih dahulu.</td></tr>';
+          document.getElementById("m-count").textContent = `0 Data`;
+          return;
+        }
+
+        const mufrodatData = Array.isArray(state.mufrodat)
+          ? state.mufrodat
+          : [];
+        let data = mufrodatData.filter((m) => m.isi_kitab_id == isiId);
+        data.sort((a, b) => (a.urutan_kata || 0) - (b.urutan_kata || 0));
+        document.getElementById("m-count").textContent = `${data.length} Data`;
+
+        if (data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="p-6 text-center text-slate-500">Belum ada mufrodat pada isi ini.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = "";
+        data.forEach((m) => {
+          tbody.innerHTML += `<tr class="hover:bg-slate-50 border-b border-slate-50">
+          <td class="px-3 py-2 font-arabic text-lg text-right text-emerald-800">${m.kata_arab}</td>
+          <td class="px-3 py-2 text-slate-600">${m.arti || "-"}</td>
+          <td class="px-3 py-2 text-slate-500">${m.tarkib || "-"}</td>
+          <td class="px-3 py-2 text-center"><button onclick="bukaModalEdit(${m.id}, 'mufrodat', ${m.urutan_kata}, '${m.kata_arab.replace(/'/g, "\\'")}')" class="flex items-center justify-center w-full gap-1 bg-slate-100 hover:bg-slate-200 py-1 rounded text-[10px] font-bold font-mono">${m.urutan_kata} ✎</button></td>
+          <td class="px-3 py-2 text-center flex flex-col gap-2">
+            <button onclick="bukaModalEditEntry(${m.id}, 'mufrodat')" class="w-full bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md text-[10px] font-bold">Edit</button>
+            <button class="w-full text-red-500 hover:text-red-700 font-bold bg-red-50 px-2 py-1 rounded-md border border-red-100" onclick="hapusData('mufrodat', ${m.id})">Hapus</button>
+          </td>
         </tr>`;
         });
       }
@@ -1720,7 +2135,7 @@
 
         if (!fId) {
           tbody.innerHTML =
-            '<tr><td colspan="4" class="p-6 text-center text-slate-500">Pilih Fasal/Bab terlebih dahulu.</td></tr>';
+            '<tr><td colspan="5" class="p-6 text-center text-slate-500">Pilih Fasal/Bab terlebih dahulu.</td></tr>';
           document.getElementById("ki-count").textContent = `0 Data`;
           return;
         }
@@ -1731,7 +2146,7 @@
 
         if (data.length === 0) {
           tbody.innerHTML =
-            '<tr><td colspan="4" class="p-6 text-center text-slate-500">Belum ada isi pada Fasal ini.</td></tr>';
+            '<tr><td colspan="5" class="p-6 text-center text-slate-500">Belum ada isi pada Fasal ini.</td></tr>';
           return;
         }
 
@@ -1746,7 +2161,11 @@
             </td>
             <td class="px-3 py-3 font-arabic text-lg md:text-xl text-right text-emerald-800 leading-relaxed min-w-[200px]" dir="rtl">${item.teks_arab}</td>
             <td class="px-3 py-3 text-slate-600 text-[11px] md:text-xs min-w-[150px] whitespace-normal">${item.teks_indo || "-"}</td>
-            <td class="px-3 py-3 text-center align-top"><button class="text-red-500 hover:text-red-700 font-bold bg-red-50 px-2 py-1 rounded-md border border-red-100" onclick="hapusData('isi_kitab', ${item.id})">Hapus</button></td>
+            <td class="px-3 py-3 text-slate-600 text-[11px] md:text-xs min-w-[150px] whitespace-normal">${item.penjelasan || "-"}</td>
+            <td class="px-3 py-3 text-center align-top flex flex-col gap-2">
+              <button onclick="bukaModalEditEntry(${item.id}, 'isi_kitab')" class="w-full bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md text-[10px] md:text-xs font-bold">Edit</button>
+              <button class="w-full text-red-500 hover:text-red-700 font-bold bg-red-50 px-2 py-1 rounded-md border border-red-100" onclick="hapusData('isi_kitab', ${item.id})">Hapus</button>
+            </td>
           </tr>
         `;
         });
@@ -1860,6 +2279,7 @@
         if (table === "bagian") renderTableBagian();
         if (table === "fasal") renderTableFasal();
         if (table === "isi_kitab") renderTableKelolaIsi();
+        if (table === "mufrodat") renderTableMufrodat();
         showToast("Dihapus");
       }
 
@@ -1877,6 +2297,105 @@
         document.getElementById("modal-edit").classList.remove("flex");
       }
 
+      function bukaModalEditEntry(id, type) {
+        const record = state[type].find((item) => item.id === id);
+        if (!record) return;
+
+        document.getElementById("edit-entry-id").value = id;
+        document.getElementById("edit-entry-type").value = type;
+        document.getElementById("modal-edit-entry-title").textContent =
+          type === "mufrodat" ? "Edit Mufrodat" : "Edit Isi Kitab";
+
+        const isiFields = document.querySelectorAll(".edit-entry-isi");
+        const mufrodatFields = document.querySelectorAll(
+          ".edit-entry-mufrodat",
+        );
+        if (type === "isi_kitab") {
+          isiFields.forEach((el) => el.classList.remove("hidden"));
+          mufrodatFields.forEach((el) => el.classList.add("hidden"));
+          document.getElementById("edit-teks-arab").value =
+            record.teks_arab || "";
+          document.getElementById("edit-teks-indo").value =
+            record.teks_indo || "";
+          document.getElementById("edit-penjelasan").value =
+            record.penjelasan || "";
+          document.getElementById("edit-urutan-val-entry").value =
+            record.urutan || 1;
+        } else {
+          isiFields.forEach((el) => el.classList.add("hidden"));
+          mufrodatFields.forEach((el) => el.classList.remove("hidden"));
+          document.getElementById("edit-kata-arab").value =
+            record.kata_arab || "";
+          document.getElementById("edit-arti").value = record.arti || "";
+          document.getElementById("edit-tarkib").value = record.tarkib || "";
+          document.getElementById("edit-urutan-val-entry").value =
+            record.urutan_kata || 1;
+        }
+
+        const modal = document.getElementById("modal-edit-entry");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function tutupModalEditEntry() {
+        const modal = document.getElementById("modal-edit-entry");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      async function updateEditEntryDatabase() {
+        const id = parseInt(document.getElementById("edit-entry-id").value, 10);
+        const type = document.getElementById("edit-entry-type").value;
+        const newUrutan = parseInt(
+          document.getElementById("edit-urutan-val-entry").value,
+          10,
+        );
+
+        let payload = {};
+        if (type === "isi_kitab") {
+          payload = {
+            teks_arab: document.getElementById("edit-teks-arab").value.trim(),
+            teks_indo:
+              document.getElementById("edit-teks-indo").value.trim() || null,
+            penjelasan:
+              document.getElementById("edit-penjelasan").value.trim() || null,
+            urutan: Number.isNaN(newUrutan) ? null : newUrutan,
+          };
+        } else {
+          payload = {
+            kata_arab: document.getElementById("edit-kata-arab").value.trim(),
+            arti: document.getElementById("edit-arti").value.trim() || null,
+            tarkib: document.getElementById("edit-tarkib").value.trim() || null,
+            urutan_kata: Number.isNaN(newUrutan) ? null : newUrutan,
+          };
+        }
+
+        showLoader("Memperbarui...");
+        const { data, error } = await supabaseClient
+          .from(type)
+          .update(payload)
+          .eq("id", id)
+          .select()
+          .single();
+        hideLoader();
+
+        if (error) {
+          showToast(error.message, true);
+          return;
+        }
+
+        const idx = state[type].findIndex((item) => item.id === id);
+        if (idx !== -1) {
+          state[type][idx] = { ...state[type][idx], ...payload };
+        }
+
+        if (type === "isi_kitab") renderTableKelolaIsi();
+        else if (type === "mufrodat") renderTableMufrodat();
+
+        tutupModalEditEntry();
+        showToast("Diperbarui");
+      }
+
       async function updateUrutanDatabase() {
         const id = parseInt(document.getElementById("edit-id").value);
         const type = document.getElementById("edit-type").value;
@@ -1885,9 +2404,14 @@
         );
 
         showLoader("Memperbarui...");
+        const updatePayload =
+          type === "mufrodat"
+            ? { urutan_kata: newUrutan }
+            : { urutan: newUrutan };
+
         const { data, error } = await supabaseClient
           .from(type)
-          .update({ urutan: newUrutan })
+          .update(updatePayload)
           .eq("id", id)
           .select()
           .single();
@@ -1898,11 +2422,15 @@
           return;
         }
         const idx = state[type].findIndex((d) => d.id === id);
-        if (idx !== -1) state[type][idx].urutan = newUrutan;
+        if (idx !== -1) {
+          if (type === "mufrodat") state[type][idx].urutan_kata = newUrutan;
+          else state[type][idx].urutan = newUrutan;
+        }
 
         if (type === "bagian") renderTableBagian();
         else if (type === "fasal") renderTableFasal();
         else if (type === "isi_kitab") renderTableKelolaIsi();
+        else if (type === "mufrodat") renderTableMufrodat();
 
         tutupModalEdit();
         showToast("Diperbarui");
