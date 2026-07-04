@@ -1,0 +1,2053 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Produktivitas | Pendidik, Santri & Wirausahawan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            colors: {
+              emerald: {
+                50: "#f0fdf4",
+                100: "#dcfce7",
+                200: "#bbf7d0",
+                500: "#10b981",
+                600: "#059669",
+                700: "#047857",
+                800: "#065f46",
+                900: "#064e3b",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #f8fafc; /* Slate 50 (Tema Cerah) */
+        color: #1e293b; /* Slate 800 */
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #10b981;
+        border-radius: 10px;
+      }
+      /* Card transitions */
+      .hover-card-effect {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .hover-card-effect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+      }
+      /* Print Styles */
+      @media print {
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .print-card {
+          box-shadow: none !important;
+          border: 1px solid #cbd5e1 !important;
+          background: white !important;
+          color: black !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white"
+  >
+    <!-- Subtle Background Pattern / Glow for Light Theme -->
+    <div
+      class="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -z-10"
+    ></div>
+    <div
+      class="absolute top-10 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -z-10"
+    ></div>
+
+    <!-- Header Section (Light Premium style) -->
+    <header
+      class="border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 no-print shadow-sm"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <!-- Brand & Roles -->
+        <div class="flex items-center gap-3">
+          <div
+            class="p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-600"
+          >
+            <i data-lucide="activity" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1
+              class="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2"
+            >
+              Rutinitas Terpadu
+              <span
+                class="text-emerald-700 text-xs font-semibold px-2.5 py-0.5 bg-emerald-100/50 rounded-full border border-emerald-200/50"
+                >v2.2</span
+              >
+            </h1>
+            <p class="text-xs text-slate-500 mt-0.5 flex flex-wrap gap-x-2">
+              <span>👨‍🏫 Pendidik & Operator</span> •
+              <span>🕌 Santri Pengajar</span> •
+              <span>🍄 Wirausaha Jamur</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Realtime Clock Widget -->
+        <div
+          class="flex items-center gap-4 bg-slate-50 border border-slate-200 px-4 py-2 rounded-2xl shadow-sm"
+        >
+          <div class="text-right">
+            <p id="live-date" class="text-xs text-slate-500 font-medium">
+              Memuat tanggal...
+            </p>
+            <p
+              id="live-time"
+              class="text-lg font-bold text-emerald-600 tracking-wider"
+            >
+              00:00:00
+            </p>
+          </div>
+          <div class="p-2 bg-emerald-50 rounded-xl text-emerald-600">
+            <i data-lucide="clock" class="w-5 h-5 animate-pulse"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+      <!-- Welcome & Motivation Banner -->
+      <div
+        class="bg-gradient-to-r from-emerald-50 via-white to-emerald-50/30 border border-emerald-200/60 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden shadow-sm"
+      >
+        <div
+          class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl"
+        ></div>
+        <div class="space-y-2 max-w-2xl z-10">
+          <h2 class="text-2xl font-bold text-slate-900">
+            Esensi Keberkahan dalam Keteraturan
+          </h2>
+          <p
+            id="motivation-quote"
+            class="text-slate-600 text-sm leading-relaxed italic transition-all duration-300"
+          >
+            "Mencari nafkah halal untuk wirausaha adalah bagian dari ibadah,
+            mengajar adalah jalan dakwah, dan mengaji adalah nutrisi ruhani."
+          </p>
+        </div>
+        <!-- Progress Tracker -->
+        <div
+          class="bg-white border border-slate-200 p-4 rounded-2xl w-full md:w-64 space-y-3 shrink-0 shadow-sm z-10"
+        >
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-500 font-semibold"
+              >Progres Hari Ini (<span id="active-day-label">Senin</span>)</span
+            >
+            <span id="progress-percent" class="text-emerald-600 font-bold"
+              >0%</span
+            >
+          </div>
+          <div
+            class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/50"
+          >
+            <div
+              id="progress-bar"
+              class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500 ease-out"
+              style="width: 0%"
+            ></div>
+          </div>
+          <p class="text-[10px] text-slate-400 text-center">
+            Tandai tugas utama hari ini untuk melacak produktivitas.
+          </p>
+        </div>
+      </div>
+
+      <!-- Dashboard Layout Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Left Side Panel (4 Cols) - Navigation, Quick Categories & Quick Add -->
+        <div class="lg:col-span-4 space-y-6 no-print">
+          <!-- Day Navigation Card -->
+          <div
+            class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm"
+          >
+            <div
+              class="flex items-center gap-2 text-slate-700 pb-2 border-b border-slate-100"
+            >
+              <i data-lucide="calendar" class="w-4 h-4 text-emerald-600"></i>
+              <h3
+                class="text-xs font-bold uppercase tracking-wider text-slate-800"
+              >
+                Pilih Hari Rutinitas
+              </h3>
+            </div>
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2"
+              id="day-tabs-container"
+            >
+              <!-- Day Tabs rendered dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Task Input Reminder Widget (Pengingat Kustom) -->
+          <div
+            class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm"
+          >
+            <div
+              class="flex items-center gap-2 text-slate-700 pb-2 border-b border-slate-100"
+            >
+              <i data-lucide="bell-plus" class="w-4 h-4 text-emerald-600"></i>
+              <h3
+                class="text-xs font-bold uppercase tracking-wider text-slate-800"
+              >
+                Tambah Pengingat Tugas
+              </h3>
+            </div>
+
+            <!-- Input Form -->
+            <div class="space-y-3">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1"
+                  >Kategori</label
+                >
+                <select
+                  id="custom-task-category"
+                  class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-semibold"
+                >
+                  <option value="guru">🏫 Guru (Sekolah)</option>
+                  <option value="operator">💻 Operator (Dapodik/ARKAS)</option>
+                  <option value="jamur">🍄 Jamur Tiram (Bisnis)</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1"
+                  >Nama Tugas / Catatan</label
+                >
+                <input
+                  type="text"
+                  id="custom-task-text"
+                  placeholder="Contoh: Sinkron Dapodik, Ambil Serbuk..."
+                  class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-slate-400"
+                />
+              </div>
+              <button
+                onclick="addCustomTask()"
+                class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-600/10 flex items-center justify-center gap-2"
+              >
+                <i data-lucide="plus" class="w-4 h-4"></i> Simpan Pengingat
+              </button>
+            </div>
+
+            <!-- Custom Task List Container -->
+            <div class="pt-3 border-t border-slate-100">
+              <h4
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2"
+              >
+                Daftar Pengingat Kustom:
+              </h4>
+              <div
+                id="custom-tasks-list"
+                class="space-y-2 max-h-48 overflow-y-auto pr-1"
+              >
+                <!-- Tasks injected dynamically by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Color Guide -->
+          <div
+            class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm"
+            id="category-panel"
+          >
+            <div
+              class="flex items-center gap-2 text-slate-700 pb-2 border-b border-slate-100"
+            >
+              <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i>
+              <h3
+                class="text-xs font-bold uppercase tracking-wider text-slate-800"
+              >
+                Kategori Aktivitas
+              </h3>
+            </div>
+            <div class="space-y-2">
+              <button
+                onclick="filterCategory('all')"
+                id="filter-all"
+                class="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-800 hover:bg-slate-200/60 transition-all font-semibold shadow-sm"
+              >
+                <span>Semua Kategori</span>
+                <span
+                  id="count-all"
+                  class="px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] text-slate-600"
+                  >0</span
+                >
+              </button>
+              <button
+                onclick="filterCategory('sekolah')"
+                id="filter-sekolah"
+                class="w-full flex items-center justify-between p-2.5 rounded-xl border border-blue-100 bg-blue-50/50 text-xs text-blue-700 hover:bg-blue-50 transition-all font-semibold"
+              >
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                  Sekolah & Operator
+                </span>
+                <span
+                  id="count-sekolah"
+                  class="px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] text-slate-500"
+                  >0</span
+                >
+              </button>
+              <button
+                onclick="filterCategory('pesantren')"
+                id="filter-pesantren"
+                class="w-full flex items-center justify-between p-2.5 rounded-xl border border-emerald-100 bg-emerald-50/50 text-xs text-emerald-700 hover:bg-emerald-50 transition-all font-semibold"
+              >
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  Pesantren & Fardhu
+                </span>
+                <span
+                  id="count-pesantren"
+                  class="px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] text-slate-500"
+                  >0</span
+                >
+              </button>
+              <button
+                onclick="filterCategory('jamur')"
+                id="filter-jamur"
+                class="w-full flex items-center justify-between p-2.5 rounded-xl border border-amber-100 bg-amber-50/50 text-xs text-amber-700 hover:bg-amber-50 transition-all font-semibold"
+              >
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  Sesi Jamur Tiram
+                </span>
+                <span
+                  id="count-jamur"
+                  class="px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] text-slate-500"
+                  >0</span
+                >
+              </button>
+              <button
+                onclick="filterCategory('pribadi')"
+                id="filter-pribadi"
+                class="w-full flex items-center justify-between p-2.5 rounded-xl border border-purple-100 bg-purple-50/50 text-xs text-purple-700 hover:bg-purple-50 transition-all font-semibold"
+              >
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                  Pribadi & Istirahat
+                </span>
+                <span
+                  id="count-pribadi"
+                  class="px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] text-slate-500"
+                  >0</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="flex gap-3">
+            <button
+              onclick="copyScheduleToClipboard()"
+              class="flex-1 py-3 px-4 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all text-xs font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-sm"
+            >
+              <i data-lucide="copy" class="w-4 h-4 text-slate-500"></i> Salin
+              Jadwal
+            </button>
+            <button
+              onclick="window.print()"
+              class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 border border-emerald-500/30 rounded-2xl text-white transition-all text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/10"
+            >
+              <i data-lucide="printer" class="w-4 h-4"></i> Cetak PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Side Panel (8 Cols) - Tabs Switcher, Timeline, or SOP Mushroom -->
+        <div class="lg:col-span-8 space-y-6">
+          <!-- Interactive Tab Switcher -->
+          <div
+            class="bg-white border border-slate-200 p-2 rounded-2xl flex gap-2 shadow-sm no-print"
+          >
+            <button
+              id="tab-btn-schedule"
+              onclick="switchMainTab('schedule')"
+              class="flex-1 py-3 px-4 bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <i data-lucide="calendar" class="w-4 h-4"></i> 📅 Rencana Harian
+            </button>
+            <button
+              id="tab-btn-mushroom"
+              onclick="switchMainTab('mushroom')"
+              class="flex-1 py-3 px-4 bg-transparent text-slate-600 hover:bg-slate-100 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+            >
+              <i data-lucide="sprout" class="w-4 h-4 text-emerald-600"></i> 🍄
+              Alur Kerja Jamur Tiram
+            </button>
+          </div>
+
+          <!-- CONTAINER 1: DAILY SCHEDULE PLANNER (Tab: schedule) -->
+          <div id="container-schedule-tab" class="space-y-6">
+            <!-- Interactive Detail Inspector Box (Kolom Deskripsi Tugas Aktif) -->
+            <div
+              class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-2xl p-6 shadow-md shadow-emerald-600/10 relative overflow-hidden"
+              id="task-detail-inspector"
+            >
+              <div
+                class="absolute -right-6 -top-6 w-32 h-32 bg-white/5 rounded-full"
+              ></div>
+              <div class="flex items-center gap-3 mb-3">
+                <span class="p-1.5 bg-white/10 rounded-lg text-emerald-100">
+                  <i data-lucide="info" class="w-5 h-5"></i>
+                </span>
+                <h3
+                  class="text-xs font-bold uppercase tracking-wider text-emerald-100"
+                >
+                  Informasi & Deskripsi Tugas
+                </h3>
+              </div>
+              <div id="inspector-content">
+                <h4
+                  class="text-lg font-bold tracking-tight mb-1"
+                  id="inspect-title"
+                >
+                  Klik Agenda Di Bawah
+                </h4>
+                <p
+                  class="text-xs text-emerald-100/90 leading-relaxed mb-4"
+                  id="inspect-desc"
+                >
+                  Pilih salah satu baris agenda kegiatan harian untuk
+                  memunculkan detail tips, panduan operasional taktis, dan
+                  petunjuk pelaksanaan yang lengkap di sini.
+                </p>
+                <div
+                  class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-semibold text-white"
+                >
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  <span id="inspect-cat">Pilih Agenda Harian Anda</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Daily Schedule List Card -->
+            <div
+              class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm print-card"
+            >
+              <div
+                class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6 flex-wrap gap-2"
+              >
+                <div>
+                  <h3
+                    class="text-lg font-bold text-slate-900 flex items-center gap-2"
+                  >
+                    Agenda Hari:
+                    <span id="current-day-title" class="text-emerald-600"
+                      >Senin</span
+                    >
+                  </h3>
+                  <p id="current-day-desc" class="text-xs text-slate-500 mt-1">
+                    Fokus utama hari ini: Pengelolaan berat jamur tiram dan
+                    back-up administrasi.
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    onclick="resetDailyProgress()"
+                    class="no-print py-1.5 px-3 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  >
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                    Harian
+                  </button>
+                  <span
+                    id="current-day-badge"
+                    class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 rounded-full text-xs font-semibold shadow-sm"
+                  >
+                    Fokus Jamur Tiram
+                  </span>
+                </div>
+              </div>
+
+              <!-- Main Timeline Container -->
+              <div
+                class="relative pl-6 border-l-2 border-slate-200 space-y-6"
+                id="timeline-container"
+              >
+                <!-- Timeline items will be injected dynamically by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTAINER 2: MUSHROOM WORKFLOW / SOP MENU (Tab: mushroom) -->
+          <div id="container-mushroom-tab" class="hidden space-y-6">
+            <!-- Mushroom SOP Main Info Header -->
+            <div
+              class="bg-gradient-to-r from-amber-500 to-amber-700 text-white p-6 rounded-2xl shadow-md shadow-amber-500/10 relative overflow-hidden"
+            >
+              <div
+                class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"
+              ></div>
+              <div
+                class="flex items-center justify-between gap-4 mb-2 flex-wrap"
+              >
+                <div class="flex items-center gap-3">
+                  <span class="p-2 bg-white/20 rounded-xl"
+                    ><i data-lucide="sprout" class="w-6 h-6"></i
+                  ></span>
+                  <h3 class="text-base font-bold tracking-wide">
+                    Pusat Alur Kerja Usaha Jamur Tiram
+                  </h3>
+                </div>
+                <!-- Reset SOP Button & Tracker -->
+                <div class="flex items-center gap-3 z-10">
+                  <div
+                    class="bg-black/20 border border-white/20 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-100"
+                  >
+                    Progres SOP: <span id="sop-progress-label">0%</span>
+                  </div>
+                  <button
+                    onclick="resetMushroomSOP()"
+                    class="py-1.5 px-3 bg-red-600 hover:bg-red-700 border border-red-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+                  >
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                    Alur Jamur
+                  </button>
+                </div>
+              </div>
+              <p class="text-xs text-amber-100 max-w-2xl leading-relaxed">
+                Pekerjaan operasional jamur tiram dipisah dari linimasa jadwal
+                harian agar aktivitas Anda terstruktur. Tandai setiap SOP
+                penting produksi, penjualan, dan perawatan di bawah ini setelah
+                selesai dikerjakan.
+              </p>
+            </div>
+
+            <!-- Layout SOP Jamur Tiram (3 Kategori Pekerjaan) -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+              <!-- a. PRODUKSI CARD (6 Cols) -->
+              <div
+                class="md:col-span-12 lg:col-span-12 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"
+              >
+                <div
+                  class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4"
+                >
+                  <div class="flex items-center gap-2.5">
+                    <span class="p-2 bg-emerald-50 rounded-xl text-emerald-600"
+                      ><i data-lucide="hammer" class="w-5 h-5"></i
+                    ></span>
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800">
+                        A. Alur Produksi
+                      </h4>
+                      <p class="text-[10px] text-slate-400">
+                        Tahapan merintis media tumbuh baglog baru
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100"
+                    >6 Langkah</span
+                  >
+                </div>
+
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  id="sop-produksi-container"
+                >
+                  <!-- Produksi Items rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- b. PENJUALAN CARD (6 Cols) -->
+              <div
+                class="md:col-span-6 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"
+              >
+                <div
+                  class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4"
+                >
+                  <div class="flex items-center gap-2.5">
+                    <span class="p-2 bg-amber-50 rounded-xl text-amber-600"
+                      ><i data-lucide="trending-up" class="w-5 h-5"></i
+                    ></span>
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800">
+                        B. Alur Penjualan
+                      </h4>
+                      <p class="text-[10px] text-slate-400">
+                        Hulu ke hilir distribusi panen
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100"
+                    >2 Langkah</span
+                  >
+                </div>
+
+                <div class="space-y-3" id="sop-penjualan-container">
+                  <!-- Penjualan Items rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- c. PERAWATAN CARD (6 Cols) -->
+              <div
+                class="md:col-span-6 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"
+              >
+                <div
+                  class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4"
+                >
+                  <div class="flex items-center gap-2.5">
+                    <span class="p-2 bg-purple-50 rounded-xl text-purple-600"
+                      ><i data-lucide="shield-check" class="w-5 h-5"></i
+                    ></span>
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800">
+                        C. Alur Perawatan
+                      </h4>
+                      <p class="text-[10px] text-slate-400">
+                        Kesehatan kubung harian jamur
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100"
+                    >3 Langkah</span
+                  >
+                </div>
+
+                <div class="space-y-3" id="sop-perawatan-container">
+                  <!-- Perawatan Items rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-slate-200/80 bg-white py-6 mt-12 no-print shadow-sm"
+    >
+      <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+        <p class="text-xs text-slate-500">
+          © 2026 • Dashboard Agenda Guru-Santri-Wirausaha.
+        </p>
+        <p class="text-[10px] text-slate-400">
+          Dioptimalkan untuk integrasi portofolio GitHub Pages Anda dengan
+          antarmuka yang cerah dan modern.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Copy Success Toast Modal -->
+    <div
+      id="toast-modal"
+      class="fixed bottom-6 right-6 bg-slate-900 border border-slate-800 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 z-50 no-print"
+    >
+      <div class="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400">
+        <i data-lucide="check" class="w-4 h-4"></i>
+      </div>
+      <span class="text-xs font-semibold" id="toast-message"
+        >Jadwal berhasil disalin!</span
+      >
+    </div>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+      // Quotes Database
+      const quotes = [
+        '"Mencari nafkah halal untuk wirausaha adalah bagian dari ibadah, mengajar adalah jalan dakwah, dan mengaji adalah nutrisi ruhani."',
+        '"Barangsiapa menempuh jalan untuk menuntut ilmu, maka Allah mudahkan jalannya menuju Surga." (HR. Muslim)',
+        '"Bekerjalah untuk duniamu seolah-olah kamu akan hidup selamanya; dan beramallah untuk akhiratmu seolah-olah kamu akan mati besok."',
+        '"Keberkahan waktu bukan terletak pada banyaknya jam luang, melainkan pada bagaimana setiap detiknya bernilai ibadah."',
+        '"Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." (HR. Ahmad)',
+      ];
+
+      // Core Schedules Database (Monday to Sunday) - Integrated Hobbies (Arabic learning, YouTube, Website)
+      const schedules = {
+        Senin: {
+          focus: "Fokus Jamur Tiram & Belajar Nahwu",
+          badgeClass: "bg-amber-50 border-amber-200 text-amber-700",
+          desc: "Hari utama untuk operasional jamur tiram secara menyeluruh serta back-up tugas operator jika menumpuk.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Sholat tahajjud secara khusyuk, istighfar, membaca doa fajar untuk memohon kelancaran rezeki wirausaha dan kelapangan dada.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kegiatan Pesantren",
+              desc: "Melaksanakan Sholat Subuh berjamaah, dilanjutkan pengajian pagi pesantren membahas kitab fiqih harian bersama para santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.30",
+              title: "Persiapan Diri & Sarapan",
+              desc: "Mandi, bersuci, sarapan sehat berkabohidrat seimbang guna mempersiapkan stamina fisik pengerjaan logistik.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.30 - 11.50",
+              title: "Sesi Operasional Jamur: Produksi & Logistik",
+              desc: "Lakukan pekerjaan produksi sesuai jadwal mandiri Anda. Sempatkan Sholat Dhuha jam 08.30 di sela pekerjaan. (Panduan lengkap lihat tab 'Alur Kerja Jamur').",
+              cat: "jamur",
+            },
+            {
+              time: "11.50 - 13.00",
+              title: "Sholat Dzuhur & Makan Siang",
+              desc: "Melaksanakan Sholat Dzuhur secara berjamaah di masjid pesantren lalu makan siang berenergi tinggi.",
+              cat: "pesantren",
+            },
+            {
+              time: "13.00 - 15.15",
+              title: "Sesi Operasional Jamur: Pembuatan Media",
+              desc: "Melanjutkan aktivitas pengolahan media baglog baru atau penataan kumbung.",
+              cat: "jamur",
+            },
+            {
+              time: "15.15 - 16.00",
+              title: "Sholat Ashar & Istirahat Sore",
+              desc: "Melaksanakan ibadah Sholat Ashar berjamaah di pesantren dan istirahat meluruskan pinggang.",
+              cat: "pesantren",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Mengajar materi dasar nahwu shorof atau hafalan juz amma kepada santri muda.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Menjalankan piket kebersihan area asrama serta memastikan lingkungan pesantren selalu asri.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 18.30",
+              title: "Sholat Maghrib & Dzikir",
+              desc: "Sholat Maghrib berjamaah secara khidmat diikuti pembacaan aurad/wirid rutin.",
+              cat: "pesantren",
+            },
+            {
+              time: "18.30 - 19.15",
+              title: "Kegiatan Kepesantrenan Maghrib",
+              desc: "Halaqah mengaji Al-Quran tajwid bersama para santri pengajar lainnya.",
+              cat: "pesantren",
+            },
+            {
+              time: "19.15 - 20.30",
+              title: "Sholat Isya & Makan Malam",
+              desc: "Melaksanakan Sholat Isya berjamaah dilanjutkan makan malam santai bersama keluarga atau santri senior.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen & Packing",
+              desc: "Melakukan panen malam dan menyortir pesanan untuk pengiriman subuh besok. (Langkah detail lihat tab 'Alur Kerja Jamur').",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 03.45",
+              title: "Istirahat / Tidur Malam",
+              desc: "Menghindari begadang, langsung tidur demi menjaga kebugaran otot pasca angkat berat.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Selasa: {
+          focus: "Mengajar Formal & Update Website",
+          badgeClass: "bg-blue-50 border-blue-200 text-blue-700",
+          desc: "Hari pertama mengajar formal sekolah secara intensif dari pagi hingga sore hari, ditambah slot update website Kitab Kuning sebelum tidur.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Membasahi lisan dengan istighfar di sepertiga malam untuk menjemput ridha Allah pada proses mengajar anak didik.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kegiatan Pesantren",
+              desc: "Sholat Subuh berjamaah, dzikir pagi (al-matsurat), dan kajian kitab akhlak bersama santri pengajar.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.00",
+              title: "Persiapan Sekolah & Sarapan",
+              desc: "Mempersiapkan modul pembelajaran sekolah, berpakaian rapi standar pendidik, sarapan, dan berangkat ke sekolah.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.00 - 15.00",
+              title: "Mengajar di Sekolah (Formal)",
+              desc: "Mengajar secara prima di kelas-kelas formal. Selipkan Sholat Dhuha pukul 09.30 ketika istirahat sekolah dan tunaikan Sholat Dzuhur pukul 12.00 berjamaah di mushola sekolah.",
+              cat: "sekolah",
+            },
+            {
+              time: "15.00 - 15.30",
+              title: "Pulang & Sholat Ashar",
+              desc: "Meluncur kembali ke pesantren dan melaksanakan Sholat Ashar secara berjamaah di asrama.",
+              cat: "pesantren",
+            },
+            {
+              time: "15.30 - 16.00",
+              title: "Istirahat Sejenak",
+              desc: "Mengistirahatkan pikiran sejenak, minum teh hangat untuk memulihkan stamina suara.",
+              cat: "pribadi",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Masuk ruang kelas madrasah diniyah untuk mengajar materi tauhid dasar kepada santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Memonitor keamanan lingkungan gerbang utama dan mendata laporan santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 18.30",
+              title: "Sholat Maghrib & Dzikir",
+              desc: "Sholat Maghrib berjamaah, wirid, dan membaca surah al-waqiah.",
+              cat: "pesantren",
+            },
+            {
+              time: "18.30 - 20.30",
+              title: "Kegiatan Mengaji & Sholat Isya",
+              desc: "Mendampingi hafalan Al-Quran santri, Sholat Isya berjamaah, dilanjutkan evaluasi singkat pasca pengajaran.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen & Perawatan",
+              desc: "Melakukan panen malam, penyemprotan suhu air kumbung, dan rekap sirkulasi baglog.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 22.00",
+              title: "🌐 Slot Website Kitab Kuning",
+              desc: "Mengunggah konten baru ke website, melakukan optimalisasi tata letak, serta membalas komentar pengunjung.",
+              cat: "pribadi",
+            },
+            {
+              time: "22.00 - 03.45",
+              title: "Tidur Malam",
+              desc: "Istirahat tidur nyenyak agar fokus mengajar besok tidak terganggu rasa kantuk.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Rabu: {
+          focus: "Mengajar & Slot Administrasi/Operator",
+          badgeClass: "bg-indigo-50 border-indigo-200 text-indigo-700",
+          desc: "Hari mengajar dengan beberapa jeda kosong. Manfaatkan jeda untuk mencicil administrasi atau Dapodik.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Sholat tahajjud, mengadu kepada Allah agar diringankan segala beban amanah mengajar.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kegiatan Pesantren",
+              desc: "Sholat Subuh berjamaah, tilawah juz harian, dan berkumpul bersama pengurus pondok.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.00",
+              title: "Mandi, Sarapan & Ke Sekolah",
+              desc: "Persiapan berpakaian rapi dan sarapan pagi pendorong konsentrasi tinggi.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.00 - 08.00",
+              title: "Mengajar Sesi 1 (Sekolah)",
+              desc: "Mengajar di kelas utama sesi pertama dengan penuh kehangatan.",
+              cat: "sekolah",
+            },
+            {
+              time: "08.00 - 10.00",
+              title: "Slot Dapodik & Administrasi Guru",
+              desc: "Membuka laptop di ruang guru untuk menginput data siswa di Dapodik. Gunakan waktu tenang ini untuk Sholat Dhuha pukul 08.15 di mushola sekolah.",
+              cat: "sekolah",
+            },
+            {
+              time: "10.00 - 11.00",
+              title: "Mengajar Sesi 2 (Sekolah)",
+              desc: "Kembali masuk kelas formal untuk membimbing murid-murid setelah jeda administratif.",
+              cat: "sekolah",
+            },
+            {
+              time: "11.00 - 13.00",
+              title: "Istirahat, Dzuhur & Makan Siang",
+              desc: "Sholat Dzuhur berjamaah di mushola sekolah, santap siang, dilanjutkan cicil administrasi kelas (koreksi nilai murid).",
+              cat: "sekolah",
+            },
+            {
+              time: "13.00 - 15.30",
+              title: "Mengajar Sesi 3 (Sekolah)",
+              desc: "Sesi mengajar terakhir di kelas sore hingga batas waktu operasional sekolah.",
+              cat: "sekolah",
+            },
+            {
+              time: "15.30 - 16.00",
+              title: "Kembali ke Pesantren & Sholat Ashar",
+              desc: "Menempuh perjalanan kembali ke pondok, segera berwudhu dan mendirikan Sholat Ashar berjamaah.",
+              cat: "pesantren",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Menyampaikan bab fiqih ibadah praktis kepada para santri di ruang aula.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Siaga memantau santri-santri yang membersihkan area halaman depan masjid pesantren.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 20.30",
+              title: "Maghrib, Isya & Pengajian Malam",
+              desc: "Melaksanakan Sholat Maghrib & Isya secara khusyuk berjamaah, mengaji kitab kuning, dan santap malam bersama.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen Malam",
+              desc: "Melaksanakan panen rutin malam hari serta packing jamur sesuai order.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 03.45",
+              title: "Tidur Malam",
+              desc: "Mengistirahatkan fisik agar esok hari sebagai piket sekolah bisa berjalan dengan energik.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Kamis: {
+          focus: "Piket Sekolah & Website Update",
+          badgeClass: "bg-teal-50 border-teal-200 text-teal-700",
+          desc: "Fokus sebagai Guru Piket sekolah. Manfaatkan waktu stand-by untuk Dapodik/ARKAS di meja piket, lalu selesaikan pembaruan website Kitab Kuning sebelum tidur.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Ibadah malam hari demi menjaga motivasi tulus mengabdi kepada umat.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kegiatan Pesantren",
+              desc: "Sholat Subuh berjamaah, tadarus, dan koordinasi harian bersama tim pengajar pondok.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.00",
+              title: "Mandi, Sarapan & Ke Sekolah",
+              desc: "Datang ke sekolah lebih awal dari guru lain karena bertugas sebagai Guru Piket penegak kedisiplinan.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.00 - 15.00",
+              title: "Tugas Guru Piket & Administrasi",
+              desc: "Menjaga meja piket utama, mencatat murid terlambat, dan mengisi kelas kosong. Sembari stand-by, kerjakan data Dapodik/ARKAS. Sediakan waktu Sholat Dhuha jam 09.30 dan Sholat Dzuhur jam 12.00.",
+              cat: "sekolah",
+            },
+            {
+              time: "15.00 - 15.30",
+              title: "Perjalanan Pulang & Sholat Ashar",
+              desc: "Pulang kembali ke lingkungan pondok dan mendirikan Sholat Ashar berjamaah di masjid.",
+              cat: "pesantren",
+            },
+            {
+              time: "15.30 - 16.00",
+              title: "Istirahat Sore",
+              desc: "Istirahat sejenak untuk menormalkan kembali energi setelah seharian aktif berkeliling sekolah.",
+              cat: "pribadi",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Membimbing santri memahami metode baca cepat kitab kuning (amtsilati/ijmali).",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Mengecek kebersihan wastafel, tempat wudhu masjid, dan mendisiplinkan santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 20.30",
+              title: "Rangkaian Ibadah Malam & Mengaji",
+              desc: "Sholat Maghrib berjamaah, pembacaan surat Yasin & tahlil bersama santri, Sholat Isya berjamaah, dan makan malam berkah.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen & Packing",
+              desc: "Memilah jamur tiram yang tumbuh subur, membersihkan permukaan sisa panen, dan melakukan pengeleman baglog yang rusak.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 22.00",
+              title: "🌐 Slot Website Kitab Kuning",
+              desc: "Melanjutkan pengetikan artikel penjelasan kitab kuning, update index pelajaran, dan memeriksa analitik website.",
+              cat: "pribadi",
+            },
+            {
+              time: "22.00 - 03.45",
+              title: "Tidur Malam",
+              desc: "Tidur pulas guna menyambut hari Jumat yang istimewa.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Jumat: {
+          focus: "Sekolah Setengah Hari & Kreativitas YouTube",
+          badgeClass: "bg-red-50 border-red-200 text-red-700",
+          desc: "Hari sekolah setengah hari. Sisa waktu sore untuk ARKAS/Dapodik, dan malam harinya untuk menjadwalkan upload video YouTube.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Menyambut sayyidul ayyam (hari jumat) dengan munajat qiyamul lail yang syahdu.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Pengajian Subuh",
+              desc: "Sholat Subuh berjamaah diikuti kajian khutbah jumat atau yasin pagi di masjid pesantren.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.00",
+              title: "Mandi, Sarapan & Ke Sekolah",
+              desc: "Memakai pakaian terbaik jumat bersih, sarapan pagi bernutrisi, lalu menuju sekolah.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.00 - 11.00",
+              title: "Mengajar di Sekolah",
+              desc: "Sesi pengajaran formal yang padat dan interaktif di kelas. Sisipkan Sholat Dhuha pukul 09.30 ketika jeda istirahat pendek.",
+              cat: "sekolah",
+            },
+            {
+              time: "11.00 - 13.00",
+              title: "Ibadah Sholat Jumat & Makan Siang",
+              desc: "Melaksanakan ibadah Sholat Jumat secara berjamaah, mendengarkan khutbah dengan khidmat, lalu makan siang bersama.",
+              cat: "pesantren",
+            },
+            {
+              time: "13.00 - 16.00",
+              title: "Sesi Fokus Utama: Dapodik & ARKAS",
+              desc: "Buka laptop di tempat yang tenang tanpa gangguan untuk pengerjaan laporan keuangan ARKAS atau verifikasi data profil guru Dapodik agar sinkronisasi sukses.",
+              cat: "sekolah",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Mengajar santri asar membahas kisah-kisah tauladan para nabi dan Rasul.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Memastikan kebersihan dan persiapan perlengkapan pengajian santri jumat malam.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 20.30",
+              title: "Rangkaian Malam Jumat Berkah",
+              desc: "Sholat Maghrib & Isya berjamaah, melantunkan shalawat nabi bersama di masjid, makan malam, dan istighosah.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen Malam",
+              desc: "Melakukan panen harian malam. Atur penjemputan pembeli subuh besok karena pesanan akhir pekan biasanya meningkat.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 22.15",
+              title: "🎬 Slot Manajemen YouTube",
+              desc: "Memeriksa analytics video, membalas komentar penonton, mengoptimalkan SEO meta tag, serta menjadwalkan video yang akan di-upload.",
+              cat: "pribadi",
+            },
+            {
+              time: "22.15 - 03.45",
+              title: "Tidur Malam",
+              desc: "Tidur lebih awal demi mengamankan tenaga untuk produksi baglog jamur hari Sabtu esok.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Sabtu: {
+          focus: "Fokus Produksi Jamur Tiram",
+          badgeClass: "bg-amber-50 border-amber-200 text-amber-700",
+          desc: "Hari khusus untuk pengerjaan logistik jamur tiram: membuat baglog, membersihkan kumbung, menyusun rencana penjualan.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Mendekatkan diri pada Allah, meluruskan niat bahwa mengurus bisnis jamur adalah sarana mendukung dakwah ekonomi umat.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kegiatan Pesantren",
+              desc: "Sholat Subuh berjamaah di masjid pondok, dilanjutkan menyimak pengajian hadis shahih bukhari.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 06.15",
+              title: "📚 Slot Belajar Nahwu Shorof",
+              desc: "Mempelajari kaidah Nahwu Shorof (bina', i'rab, tashrifan) saat pikiran masih sangat segar di pagi hari.",
+              cat: "pribadi",
+            },
+            {
+              time: "06.15 - 07.30",
+              title: "Persiapan & Sarapan Pagi",
+              desc: "Minum air putih yang cukup, sarapan berprotein tinggi, menyiapkan sepatu boots dan sarung tangan kerja.",
+              cat: "pribadi",
+            },
+            {
+              time: "07.30 - 11.50",
+              title: "Sesi Operasional Jamur: Produksi Berat",
+              desc: "Melakukan aktivitas produksi di laboratorium dan gudang baglog. (Lihat alur kerja lengkap di tab 'Alur Kerja Jamur'). Sholat Dhuha pukul 08.30.",
+              cat: "jamur",
+            },
+            {
+              time: "11.50 - 13.00",
+              title: "Sholat Dzuhur & Makan Siang",
+              desc: "Istirahat menyegarkan diri, berwudhu, Sholat Dzuhur berjamaah, lalu makan siang bersama asisten jamur.",
+              cat: "pesantren",
+            },
+            {
+              time: "13.00 - 15.15",
+              title: "Sesi Operasional Jamur: Sterilisasi & Pembibitan",
+              desc: "Melanjutkan sterilisasi uap drum atau inokulasi pembibitan di ruang steril.",
+              cat: "jamur",
+            },
+            {
+              time: "15.15 - 16.00",
+              title: "Sholat Ashar & Persiapan Sore",
+              desc: "Melaksanakan Sholat Ashar berjamaah di mushola terdekat dan membasuh keringat kerja.",
+              cat: "pesantren",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Kembali mengajar asar mengulas tata bahasa arab dasar kepada santri asrama.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Merapikan sandal-sandal jamaah di teras masjid dan memastikan lampu penerangan luar menyala.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 20.30",
+              title: "Rangkaian Ibadah Malam Pesantren",
+              desc: "Sholat Maghrib & Isya berjamaah, tadarus, makan malam bersama, dan evaluasi kepengurusan pondok.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen & Catatan Kas",
+              desc: "Memanen jamur malam hari dan melakukan rekapitulasi data penjualan harian.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 03.45",
+              title: "Tidur Malam",
+              desc: "Tidur malam guna merilekskan otot punggung dan tangan setelah beraktivitas fisik memadatkan ratusan baglog.",
+              cat: "pribadi",
+            },
+          ],
+        },
+        Ahad: {
+          focus: "YouTube, Website & Ibadah Pekanan",
+          badgeClass: "bg-purple-50 border-purple-200 text-purple-700",
+          desc: "Hari kreativitas dan produktivitas digital. Mengisi konten YouTube, memperbarui website Kitab Kuning, serta istirahat santai.",
+          tasks: [
+            {
+              time: "03.45 - 04.30",
+              title: "Qiyamul Lail (Tahajjud & Witir)",
+              desc: "Merenungkan bersyukurnya hati atas seminggu penuh pengabdian tanpa putus sebagai pendidik, santri, dan pengusaha.",
+              cat: "pesantren",
+            },
+            {
+              time: "04.30 - 05.30",
+              title: "Sholat Subuh & Kajian Fajar",
+              desc: "Sholat Subuh berjamaah, diikuti pengajian fajar atau tahlilan ahad subuh bersama santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "05.30 - 08.30",
+              title: "Olahraga Ringan, Bersih-Bersih & Sarapan",
+              desc: "Lari santai di pagi hari, merapikan asrama/kamar tidur pribadi secara detail, mencuci pakaian kerja, dan sarapan santai.",
+              cat: "pribadi",
+            },
+            {
+              time: "08.30 - 10.30",
+              title: "🎬 Slot Kreatif: Rekam & Edit YouTube",
+              desc: "Melakukan proses rekaman video edukasi atau kegiatan pesantren, dilanjutkan proses editing visual ringan untuk konten YouTube Anda. Sholat Dhuha jam 09.00.",
+              cat: "pribadi",
+            },
+            {
+              time: "10.30 - 11.50",
+              title: "🌐 Slot Kreatif: Update Website Kitab Kuning",
+              desc: "Menulis rangkuman kajian kitab baru, memperbarui struktur database web, atau merespons formulir pertanyaan pengunjung.",
+              cat: "pribadi",
+            },
+            {
+              time: "11.50 - 13.00",
+              title: "Sholat Dzuhur & Makan Siang",
+              desc: "Sholat Dzuhur berjamaah dan makan siang istimewa bersama keluarga atau rekan bisnis.",
+              cat: "pesantren",
+            },
+            {
+              time: "13.00 - 15.15",
+              title: "Istirahat Siang / Tidur Qailulah",
+              desc: "Melaksanakan anjuran tidur siang singkat (sunnah qailulah) guna merilekskan seluruh urat saraf tubuh.",
+              cat: "pribadi",
+            },
+            {
+              time: "15.15 - 16.00",
+              title: "Sholat Ashar & Persiapan Sore",
+              desc: "Mempersiapkan diri menyambut sholat ashar berjamaah di asrama pesantren.",
+              cat: "pesantren",
+            },
+            {
+              time: "16.00 - 17.00",
+              title: "Mengajar Santri (Pesantren)",
+              desc: "Mengajar asar menyajikan materi sejarah peradaban islam yang menginspirasi para santri.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.00 - 17.55",
+              title: "Tugas Piket Pesantren",
+              desc: "Mengecek stok tabung gas dapur pondok pesantren dan merapikan ruang kelas diniyah.",
+              cat: "pesantren",
+            },
+            {
+              time: "17.55 - 20.30",
+              title: "Ibadah Maghrib, Isya & Evaluasi Pekanan",
+              desc: "Malam terakhir pekan ini, berserah diri memohon kelancaran rintisan karir pekan esok. Sholat berjamaah serta dzikir ma'tsurat sore.",
+              cat: "pesantren",
+            },
+            {
+              time: "20.30 - 21.30",
+              title: "Sesi Operasional Jamur: Panen Ringan",
+              desc: "Masuk kumbung untuk panen malam demi menjaga kesehatan pori baglog.",
+              cat: "jamur",
+            },
+            {
+              time: "21.30 - 03.45",
+              title: "Tidur Malam",
+              desc: "Tidur lelap untuk memulihkan energi penuh menyambut aktivitas hari senin esok.",
+              cat: "pribadi",
+            },
+          ],
+        },
+      };
+
+      // Structured Mushroom SOP Workflow Database
+      const mushroomSOP = {
+        produksi: [
+          {
+            id: "sop-p1",
+            label: "Pengambilan Serbuk",
+            details:
+              "Mengambil serbuk gergaji kayu sengon/kayu keras berkualitas di pabrik penggergajian kayu.",
+          },
+          {
+            id: "sop-p2",
+            label: "Belanja Bahan",
+            details:
+              "Membeli bekatul, kalsium (kapur pertanian), gips, kantong plastik PP, cincin paralon, dan karet gelang.",
+          },
+          {
+            id: "sop-p3",
+            label: "Pembuatan Baglog",
+            details:
+              "Mengayak serbuk, melakukan pencampuran formula bahan secara merata, mengatur kadar air (60-65%), memasukkan ke plastik, lalu mengepres padat.",
+          },
+          {
+            id: "sop-p4",
+            label: "Pengambilan Kayu Bakar",
+            details:
+              "Menyediakan pasokan kayu bakar kering untuk tungku sterilisasi drum uap.",
+          },
+          {
+            id: "sop-p5",
+            label: "Sterilisasi Baglog",
+            details:
+              "Mengukus baglog di dalam drum uap panas (suhu 100°C) selama 8 hingga 12 jam agar media steril dari bakteri patogen.",
+          },
+          {
+            id: "sop-p6",
+            label: "Pembibitan (Inokulasi)",
+            details:
+              "Memasukkan bibit jamur tiram F2 ke dalam baglog dingin di dekat api bunsen (steril) dan langsung disumbat kapas cincin.",
+          },
+        ],
+        penjualan: [
+          {
+            id: "sop-s1",
+            label: "Panen Jamur",
+            details:
+              "Memetik jamur tiram mekar segar yang berdiameter ideal pada malam hari agar tidak mudah layu saat dikirim.",
+          },
+          {
+            id: "sop-s2",
+            label: "Pengantaran ke Pembeli",
+            details:
+              "Pengepakan jamur tiram per 1kg atau sesuai request dan segera didistribusikan ke tengkulak, pasar induk, atau pembeli langsung.",
+          },
+        ],
+        perawatan: [
+          {
+            id: "sop-r1",
+            label: "Sortir Baglog",
+            details:
+              "Memantau masa inkubasi miselium. Pisahkan baglog yang terkontaminasi kapang hijau/hitam ke tempat aman.",
+          },
+          {
+            id: "sop-r2",
+            label: "Pembersihan Kumbung",
+            details:
+              "Menyapu bersih sisa tangkai jamur yang tertinggal di cincin baglog, menyemprot kabut air lantai kumbung agar suhu tetap lembab (80-90%).",
+          },
+          {
+            id: "sop-r3",
+            label: "Pembuangan Baglog",
+            details:
+              "Mengeluarkan baglog yang sudah melewati 4-5 kali siklus panen (sudah tidak produktif/lapuk) ke tempat pembuangan akhir pupuk.",
+          },
+        ],
+      };
+
+      let currentDay = "Selasa"; // Default start on Tuesday as requested (first full school day)
+      let selectedCategoryFilter = "all";
+      let activeMainTab = "schedule"; // 'schedule' or 'mushroom'
+
+      // DOM Elements
+      const liveDateEl = document.getElementById("live-date");
+      const liveTimeEl = document.getElementById("live-time");
+      const dayTabsContainer = document.getElementById("day-tabs-container");
+      const timelineContainer = document.getElementById("timeline-container");
+      const currentDayTitle = document.getElementById("current-day-title");
+      const currentDayDesc = document.getElementById("current-day-desc");
+      const currentDayBadge = document.getElementById("current-day-badge");
+      const activeDayLabel = document.getElementById("active-day-label");
+      const progressBar = document.getElementById("progress-bar");
+      const progressPercent = document.getElementById("progress-percent");
+      const toastModal = document.getElementById("toast-modal");
+      const toastMessage = document.getElementById("toast-message");
+      const motivationQuote = document.getElementById("motivation-quote");
+      const sopProgressLabel = document.getElementById("sop-progress-label");
+
+      // Inspector DOM Elements
+      const inspectTitle = document.getElementById("inspect-title");
+      const inspectDesc = document.getElementById("inspect-desc");
+      const inspectCat = document.getElementById("inspect-cat");
+
+      // Tabs DOM Elements
+      const containerScheduleTab = document.getElementById(
+        "container-schedule-tab",
+      );
+      const containerMushroomTab = document.getElementById(
+        "container-mushroom-tab",
+      );
+      const tabBtnSchedule = document.getElementById("tab-btn-schedule");
+      const tabBtnMushroom = document.getElementById("tab-btn-mushroom");
+      const categoryPanel = document.getElementById("category-panel");
+
+      // Initialization
+      window.onload = function () {
+        lucide.createIcons();
+        startClock();
+        rotateQuotes();
+        renderDayTabs();
+        renderTimeline();
+        renderCustomTasks();
+        renderMushroomSOPs();
+        updateAllCategoryCounts();
+      };
+
+      // Real-time Clock
+      function startClock() {
+        setInterval(() => {
+          const now = new Date();
+          const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          };
+          liveDateEl.innerText = now.toLocaleDateString("id-ID", options);
+
+          let hours = String(now.getHours()).padStart(2, "0");
+          let minutes = String(now.getMinutes()).padStart(2, "0");
+          let seconds = String(now.getSeconds()).padStart(2, "0");
+          liveTimeEl.innerText = `${hours}:${minutes}:${seconds}`;
+        }, 1000);
+      }
+
+      // Quotes Rotator
+      function rotateQuotes() {
+        let quoteIndex = 0;
+        setInterval(() => {
+          quoteIndex = (quoteIndex + 1) % quotes.length;
+          motivationQuote.style.opacity = 0;
+          setTimeout(() => {
+            motivationQuote.innerText = quotes[quoteIndex];
+            motivationQuote.style.opacity = 1;
+          }, 300);
+        }, 10000);
+      }
+
+      // Switch Antara Menu Tab
+      function switchMainTab(tabName) {
+        activeMainTab = tabName;
+        if (tabName === "schedule") {
+          containerScheduleTab.classList.remove("hidden");
+          containerMushroomTab.classList.add("hidden");
+          categoryPanel.classList.remove("opacity-50", "pointer-events-none");
+
+          tabBtnSchedule.className =
+            "flex-1 py-3 px-4 bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm";
+          tabBtnMushroom.className =
+            "flex-1 py-3 px-4 bg-transparent text-slate-600 hover:bg-slate-100 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2";
+        } else {
+          containerScheduleTab.classList.add("hidden");
+          containerMushroomTab.classList.remove("hidden");
+          categoryPanel.classList.add("opacity-50", "pointer-events-none");
+
+          tabBtnSchedule.className =
+            "flex-1 py-3 px-4 bg-transparent text-slate-600 hover:bg-slate-100 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2";
+          tabBtnMushroom.className =
+            "flex-1 py-3 px-4 bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm";
+        }
+      }
+
+      // Render Sidebar Day Tabs
+      function renderDayTabs() {
+        dayTabsContainer.innerHTML = "";
+        const days = Object.keys(schedules);
+
+        days.forEach((day) => {
+          const isSelected = day === currentDay;
+          const activeClasses = isSelected
+            ? "bg-emerald-600 border-emerald-500 text-white font-bold shadow-md shadow-emerald-600/10"
+            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900";
+
+          const btn = document.createElement("button");
+          btn.className = `w-full text-left px-4 py-3 rounded-xl border text-xs flex items-center justify-between transition-all duration-200 ${activeClasses}`;
+          btn.onclick = () => selectDay(day);
+
+          // Icon styling based on focus
+          let iconName = "book-open";
+          if (day === "Senin" || day === "Sabtu") iconName = "sprout";
+          if (day === "Ahad") iconName = "home";
+
+          btn.innerHTML = `
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="${iconName}" class="w-4 h-4 ${isSelected ? "text-white" : "text-emerald-600"}"></i>
+                        ${day}
+                    </span>
+                    <span class="text-[10px] ${isSelected ? "text-emerald-100" : "text-slate-500"} font-medium">${schedules[day].focus}</span>
+                `;
+          dayTabsContainer.appendChild(btn);
+        });
+        lucide.createIcons();
+      }
+
+      // Select Active Day Action
+      function selectDay(day) {
+        currentDay = day;
+        renderDayTabs();
+        renderTimeline();
+        updateAllCategoryCounts();
+        // Automatically switch back to Schedule View if user selects a different day
+        switchMainTab("schedule");
+      }
+
+      // Render Timeline Tasks based on active day and filters
+      function renderTimeline() {
+        const data = schedules[currentDay];
+        currentDayTitle.innerText = currentDay;
+        currentDayDesc.innerText = data.desc;
+        currentDayBadge.innerText = data.focus;
+        currentDayBadge.className = `px-3 py-1 rounded-full text-xs font-semibold border ${data.badgeClass}`;
+        activeDayLabel.innerText = currentDay;
+
+        timelineContainer.innerHTML = "";
+
+        // Filter tasks
+        const filteredTasks =
+          selectedCategoryFilter === "all"
+            ? data.tasks
+            : data.tasks.filter((t) => t.cat === selectedCategoryFilter);
+
+        if (filteredTasks.length === 0) {
+          timelineContainer.innerHTML = `
+                    <div class="py-12 text-center text-slate-400">
+                        <i data-lucide="info" class="w-8 h-8 mx-auto mb-3 opacity-40"></i>
+                        <p class="text-xs font-semibold">Tidak ada agenda kategori ini pada hari ${currentDay}.</p>
+                    </div>
+                `;
+          lucide.createIcons();
+          updateProgressBar();
+          return;
+        }
+
+        filteredTasks.forEach((task, index) => {
+          // Get checklist state from LocalStorage
+          const taskKey = `${currentDay}-${index}-${task.title}`;
+          const isChecked = localStorage.getItem(taskKey) === "true";
+
+          // CSS styles according to category
+          let borderCol = "border-slate-200";
+          let textCol = "text-slate-700";
+          let bgCol = "bg-white";
+          let badgeHTML = "";
+
+          if (task.cat === "sekolah") {
+            borderCol = "border-blue-100";
+            bgCol = "bg-blue-50/20";
+            textCol = "text-blue-900";
+            badgeHTML = `<span class="text-[9px] font-bold px-2 py-0.5 bg-blue-100/60 border border-blue-200 text-blue-700 rounded">Sekolah</span>`;
+          } else if (task.cat === "pesantren") {
+            borderCol = "border-emerald-100";
+            bgCol = "bg-emerald-50/20";
+            textCol = "text-emerald-900";
+            badgeHTML = `<span class="text-[9px] font-bold px-2 py-0.5 bg-emerald-100 border border-emerald-200 text-emerald-700 rounded">Pesantren</span>`;
+          } else if (task.cat === "jamur") {
+            borderCol = "border-amber-100";
+            bgCol = "bg-amber-50/20";
+            textCol = "text-amber-900";
+            badgeHTML = `<span class="text-[9px] font-bold px-2 py-0.5 bg-amber-100 border border-amber-200 text-amber-700 rounded">Sesi Jamur</span>`;
+          } else if (task.cat === "pribadi") {
+            borderCol = "border-purple-100";
+            bgCol = "bg-purple-50/20";
+            textCol = "text-purple-900";
+            badgeHTML = `<span class="text-[9px] font-bold px-2 py-0.5 bg-purple-100 border border-purple-200 text-purple-700 rounded">Pribadi</span>`;
+          }
+
+          const item = document.createElement("div");
+          item.className = "relative flex gap-4 group cursor-pointer";
+          // When card is clicked, show inside Inspector box
+          item.onclick = (e) => {
+            // Prevent execution if checklist button is clicked
+            if (
+              e.target.tagName === "INPUT" ||
+              e.target.tagName === "SPAN" ||
+              e.target.tagName === "LABEL"
+            ) {
+              return;
+            }
+            inspectTask(task);
+          };
+
+          // Dynamic timeline dot
+          item.innerHTML = `
+                    <!-- Bullet Dot -->
+                    <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-white border-2 ${isChecked ? "border-emerald-500 bg-emerald-500" : "border-slate-300 group-hover:border-emerald-500"} flex items-center justify-center transition-all duration-300 z-10">
+                        ${isChecked ? '<i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>' : ""}
+                    </div>
+                    
+                    <!-- Content Card (Light Theme) -->
+                    <div class="flex-grow p-4 border ${isChecked ? "border-emerald-200 bg-emerald-50/40 shadow-none" : borderCol + " " + bgCol} rounded-2xl hover:border-emerald-500 hover:shadow-sm transition-all duration-300 relative hover-card-effect">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold font-mono text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-md border border-emerald-200/50">${task.time}</span>
+                                ${badgeHTML}
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer no-print select-none">
+                                <input type="checkbox" class="hidden" onchange="toggleTask('${taskKey}')" ${isChecked ? "checked" : ""}>
+                                <span class="text-[10px] text-slate-500 bg-white px-2 py-1 border border-slate-200 rounded-md hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-xs">
+                                    ${isChecked ? "Belum Selesai" : "Selesai"}
+                                </span>
+                            </label>
+                        </div>
+                        <h4 class="text-sm font-bold ${isChecked ? "line-through text-slate-400" : "text-slate-800"} transition-all">${task.title}</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-1">${task.desc}</p>
+                    </div>
+                `;
+          timelineContainer.appendChild(item);
+        });
+        lucide.createIcons();
+        updateProgressBar();
+      }
+
+      // Action when a task card is clicked to show description
+      function inspectTask(task) {
+        inspectTitle.innerText = task.title;
+        inspectDesc.innerText = task.desc;
+
+        // Format Category labels
+        let formattedCat = "Pribadi & Istirahat";
+        if (task.cat === "sekolah") formattedCat = "Sekolah & Operator";
+        else if (task.cat === "pesantren")
+          formattedCat = "Pesantren & Ibadah Fardhu";
+        else if (task.cat === "jamur") formattedCat = "Operasional Jamur Tiram";
+
+        inspectCat.innerText = `${task.time} | Kategori: ${formattedCat}`;
+
+        // Subtle pulse animation trigger
+        const inspector = document.getElementById("task-detail-inspector");
+        inspector.classList.add("scale-101", "shadow-lg");
+        setTimeout(() => {
+          inspector.classList.remove("scale-101", "shadow-lg");
+        }, 300);
+      }
+
+      // Toggle task checklist state
+      function toggleTask(taskKey) {
+        const isChecked = localStorage.getItem(taskKey) === "true";
+        localStorage.setItem(taskKey, !isChecked);
+        renderTimeline();
+        updateAllCategoryCounts();
+      }
+
+      // Reset Daily Agenda Progress
+      function resetDailyProgress() {
+        const tasks = schedules[currentDay].tasks;
+        tasks.forEach((task, index) => {
+          const taskKey = `${currentDay}-${index}-${task.title}`;
+          localStorage.removeItem(taskKey);
+        });
+        renderTimeline();
+        updateAllCategoryCounts();
+        showToast(`Agenda hari ${currentDay} berhasil di-reset!`);
+      }
+
+      // Update progress bar
+      function updateProgressBar() {
+        const tasks = schedules[currentDay].tasks;
+        let completed = 0;
+        tasks.forEach((task, index) => {
+          const taskKey = `${currentDay}-${index}-${task.title}`;
+          if (localStorage.getItem(taskKey) === "true") completed++;
+        });
+
+        const percent =
+          tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+        progressBar.style.width = `${percent}%`;
+        progressPercent.innerText = `${percent}%`;
+      }
+
+      // Category filtering logic
+      function filterCategory(cat) {
+        selectedCategoryFilter = cat;
+
+        // Manage UI active status for filters
+        const filterButtons = [
+          "all",
+          "sekolah",
+          "pesantren",
+          "jamur",
+          "pribadi",
+        ];
+        filterButtons.forEach((btn) => {
+          const el = document.getElementById(`filter-${btn}`);
+          if (btn === cat) {
+            el.classList.add(
+              "ring-2",
+              "ring-emerald-500",
+              "scale-102",
+              "font-bold",
+            );
+          } else {
+            el.classList.remove(
+              "ring-2",
+              "ring-emerald-500",
+              "scale-102",
+              "font-bold",
+            );
+          }
+        });
+
+        renderTimeline();
+      }
+
+      // Count items in each category
+      function updateAllCategoryCounts() {
+        const tasks = schedules[currentDay].tasks;
+        let counts = {
+          all: tasks.length,
+          sekolah: 0,
+          pesantren: 0,
+          jamur: 0,
+          pribadi: 0,
+        };
+
+        tasks.forEach((task) => {
+          if (counts[task.cat] !== undefined) {
+            counts[task.cat]++;
+          }
+        });
+
+        document.getElementById("count-all").innerText = counts.all;
+        document.getElementById("count-sekolah").innerText = counts.sekolah;
+        document.getElementById("count-pesantren").innerText = counts.pesantren;
+        document.getElementById("count-jamur").innerText = counts.jamur;
+        document.getElementById("count-pribadi").innerText = counts.pribadi;
+      }
+
+      // ==========================================
+      // MUSHROOM WORKFLOWS SOP RENDER CODES
+      // ==========================================
+      function renderMushroomSOPs() {
+        const prodContainer = document.getElementById("sop-produksi-container");
+        const penContainer = document.getElementById("sop-penjualan-container");
+        const perContainer = document.getElementById("sop-perawatan-container");
+
+        prodContainer.innerHTML = "";
+        penContainer.innerHTML = "";
+        perContainer.innerHTML = "";
+
+        // Render Produksi
+        mushroomSOP.produksi.forEach((item, idx) => {
+          prodContainer.appendChild(
+            createSOPCheckElement(item, "produksi", idx + 1),
+          );
+        });
+
+        // Render Penjualan
+        mushroomSOP.penjualan.forEach((item, idx) => {
+          penContainer.appendChild(
+            createSOPCheckElement(item, "penjualan", idx + 1),
+          );
+        });
+
+        // Render Perawatan
+        mushroomSOP.perawatan.forEach((item, idx) => {
+          perContainer.appendChild(
+            createSOPCheckElement(item, "perawatan", idx + 1),
+          );
+        });
+
+        updateSOPProgress();
+      }
+
+      function createSOPCheckElement(item, type, number) {
+        const taskKey = `sop-${type}-${item.id}`;
+        const isChecked = localStorage.getItem(taskKey) === "true";
+
+        // Border & Text Style based on Type
+        let borderStyle =
+          "border-slate-100 hover:border-emerald-200 bg-slate-50/50";
+        let bulletColor = "text-slate-400 bg-white border-slate-200";
+        if (isChecked) {
+          borderStyle = "border-emerald-200 bg-emerald-50/30";
+          bulletColor = "text-white bg-emerald-500 border-emerald-500";
+        }
+
+        const div = document.createElement("div");
+        div.className = `p-3.5 border ${borderStyle} rounded-2xl flex gap-3 items-start transition-all hover:shadow-xs cursor-pointer hover-card-effect`;
+        div.onclick = () => toggleSOPItem(taskKey);
+
+        div.innerHTML = `
+                <!-- Number / Check circle -->
+                <div class="w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 shadow-xs transition-all ${bulletColor}">
+                    ${isChecked ? '<i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>' : number}
+                </div>
+                <!-- Text Details -->
+                <div class="flex-grow">
+                    <h5 class="text-xs font-bold ${isChecked ? "line-through text-slate-400" : "text-slate-700"}">${item.label}</h5>
+                    <p class="text-[10px] text-slate-500 mt-1 leading-relaxed">${item.details}</p>
+                </div>
+            `;
+        return div;
+      }
+
+      function toggleSOPItem(taskKey) {
+        const isChecked = localStorage.getItem(taskKey) === "true";
+        localStorage.setItem(taskKey, !isChecked);
+        renderMushroomSOPs();
+        showToast("Kemajuan Alur Jamur berhasil diperbarui!");
+      }
+
+      // Reset All Mushroom SOP Workflows
+      function resetMushroomSOP() {
+        // Collect all SOP item keys and delete them from localStorage
+        const categories = ["produksi", "penjualan", "perawatan"];
+        categories.forEach((cat) => {
+          mushroomSOP[cat].forEach((item) => {
+            localStorage.removeItem(`sop-${cat}-${item.id}`);
+          });
+        });
+        renderMushroomSOPs();
+        showToast("Semua progres alur kerja jamur tiram telah di-reset!");
+      }
+
+      // Calculate and Update SOP Progress Indicator
+      function updateSOPProgress() {
+        const categories = ["produksi", "penjualan", "perawatan"];
+        let totalItems = 0;
+        let checkedItems = 0;
+
+        categories.forEach((cat) => {
+          mushroomSOP[cat].forEach((item) => {
+            totalItems++;
+            if (localStorage.getItem(`sop-${cat}-${item.id}`) === "true") {
+              checkedItems++;
+            }
+          });
+        });
+
+        const percentage =
+          totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+        sopProgressLabel.innerText = `${percentage}%`;
+      }
+
+      // ==========================================
+      // CUSTOM USER-ADDED TASKS REMINDER CODES
+      // ==========================================
+
+      // Retrieve custom tasks from storage
+      function getCustomTasks() {
+        const rawTasks = localStorage.getItem("custom_reminders");
+        return rawTasks ? JSON.parse(rawTasks) : [];
+      }
+
+      // Save custom tasks to storage
+      function saveCustomTasks(tasks) {
+        localStorage.setItem("custom_reminders", JSON.stringify(tasks));
+      }
+
+      // Add custom task action
+      function addCustomTask() {
+        const categorySelect = document.getElementById("custom-task-category");
+        const textInput = document.getElementById("custom-task-text");
+
+        const category = categorySelect.value;
+        const text = textInput.value.trim();
+
+        if (!text) {
+          showToast("Harap ketik isi pengingat terlebih dahulu!");
+          return;
+        }
+
+        const newTask = {
+          id: Date.now(),
+          category: category,
+          text: text,
+          completed: false,
+          dateAdded: new Date().toLocaleDateString("id-ID"),
+        };
+
+        const tasks = getCustomTasks();
+        tasks.push(newTask);
+        saveCustomTasks(tasks);
+
+        textInput.value = ""; // clear input
+        renderCustomTasks();
+        showToast("Pengingat berhasil disimpan!");
+      }
+
+      // Render Custom Reminder Tasks in UI
+      function renderCustomTasks() {
+        const listContainer = document.getElementById("custom-tasks-list");
+        listContainer.innerHTML = "";
+        const tasks = getCustomTasks();
+
+        if (tasks.length === 0) {
+          listContainer.innerHTML = `
+                    <p class="text-[11px] text-slate-400 italic text-center py-4">Belum ada pengingat kustom aktif.</p>
+                `;
+          return;
+        }
+
+        tasks.forEach((task) => {
+          let badgeStyle = "bg-blue-100 text-blue-700";
+          let badgeLabel = "Guru";
+
+          if (task.category === "operator") {
+            badgeStyle = "bg-indigo-100 text-indigo-700";
+            badgeLabel = "Operator";
+          } else if (task.category === "jamur") {
+            badgeStyle = "bg-amber-100 text-amber-700";
+            badgeLabel = "Jamur Tiram";
+          }
+
+          const item = document.createElement("div");
+          item.className = `p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 flex items-start justify-between gap-2 transition-all ${task.completed ? "opacity-60" : ""}`;
+          item.innerHTML = `
+                    <div class="flex flex-col gap-1 flex-grow">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[8px] font-bold px-1.5 py-0.2 ${badgeStyle} rounded">${badgeLabel}</span>
+                            <span class="text-[9px] text-slate-400">${task.dateAdded}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-800 ${task.completed ? "line-through text-slate-400" : ""}">${task.text}</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="toggleCustomTask(${task.id})" class="p-1 hover:bg-slate-200 rounded text-slate-500 hover:text-emerald-600 transition-all">
+                            <i data-lucide="${task.completed ? "rotate-ccw" : "check"}" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="deleteCustomTask(${task.id})" class="p-1 hover:bg-slate-200 rounded text-slate-500 hover:text-red-500 transition-all">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+          listContainer.appendChild(item);
+        });
+        lucide.createIcons();
+      }
+
+      // Toggle state of custom task
+      function toggleCustomTask(id) {
+        let tasks = getCustomTasks();
+        tasks = tasks.map((task) => {
+          if (task.id === id) {
+            task.completed = !task.completed;
+          }
+          return task;
+        });
+        saveCustomTasks(tasks);
+        renderCustomTasks();
+      }
+
+      // Delete custom task
+      function deleteCustomTask(id) {
+        let tasks = getCustomTasks();
+        tasks = tasks.filter((task) => task.id !== id);
+        saveCustomTasks(tasks);
+        renderCustomTasks();
+        showToast("Pengingat berhasil dihapus.");
+      }
+
+      // Copy schedule content to clipboard (Safely compatible for frame output)
+      function copyScheduleToClipboard() {
+        const data = schedules[currentDay];
+        let text = `📅 JADWAL HARIAN TERPADU: ${currentDay.toUpperCase()} (${data.focus})\n`;
+        text += `==============================================\n\n`;
+
+        data.tasks.forEach((task) => {
+          text += `⏰ [${task.time}] - ${task.title}\n`;
+          text += `   ↳ ${task.desc}\n\n`;
+        });
+
+        // Add custom reminders inside the clipboard as well if any exist
+        const customTasks = getCustomTasks().filter((t) => !t.completed);
+        if (customTasks.length > 0) {
+          text += `📌 CATATAN PENGINGAT TAMBAHAN:\n`;
+          customTasks.forEach((task) => {
+            text += `• [${task.category.toUpperCase()}] ${task.text}\n`;
+          });
+          text += `\n`;
+        }
+
+        text += `*Dihasilkan dari Dashboard Produktivitas Harian Anda.*`;
+
+        // Copy to Clipboard execution (safely compatible with iFrame blocks)
+        const tempTextarea = document.createElement("textarea");
+        tempTextarea.value = text;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+
+        try {
+          const successful = document.execCommand("copy");
+          if (successful) {
+            showToast("Jadwal hari ini disalin ke clipboard!");
+          } else {
+            showToast("Gagal menyalin jadwal.");
+          }
+        } catch (err) {
+          showToast("Terjadi kesalahan sistem saat menyalin.");
+        }
+
+        document.body.removeChild(tempTextarea);
+      }
+
+      // Show Toast Dialog
+      function showToast(message) {
+        toastMessage.innerText = message;
+        toastModal.classList.remove("translate-y-20", "opacity-0");
+        toastModal.classList.add("translate-y-0", "opacity-100");
+
+        setTimeout(() => {
+          toastModal.classList.add("translate-y-20", "opacity-0");
+          toastModal.classList.remove("translate-y-0", "opacity-100");
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
